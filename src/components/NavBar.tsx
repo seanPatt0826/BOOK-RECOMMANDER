@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import SearchBar from "@/components/SearchBar";
 
 export default async function NavBar() {
   const supabase = await createClient();
@@ -23,7 +24,8 @@ export default async function NavBar() {
           AI Chat
         </Link>
 
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-4">
+          <SearchBar />
           {user ? (
             <form action="/auth/signout" method="post">
               <button
