@@ -17,12 +17,13 @@ export async function createTitleComment(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return;
-  await supabase.from("title_comments").insert({
+  const { error } = await supabase.from("title_comments").insert({
     user_id: user.id,
     item_id: itemId,
     item_type: itemType,
     body: text.slice(0, 4000),
   });
+  if (error) console.error("createTitleComment failed:", error.message);
   revalidatePath(`/title/${itemType}/${itemId}`);
 }
 
@@ -37,10 +38,11 @@ export async function deleteTitleComment(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return;
-  await supabase
+  const { error } = await supabase
     .from("title_comments")
     .delete()
     .eq("id", id)
     .eq("user_id", user.id);
+  if (error) console.error("deleteTitleComment failed:", error.message);
   revalidatePath(`/title/${itemType}/${itemId}`);
 }

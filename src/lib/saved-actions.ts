@@ -11,7 +11,7 @@ export async function saveItem(item: SearchResult): Promise<void> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return;
-  await supabase.from("saved_items").upsert(
+  const { error } = await supabase.from("saved_items").upsert(
     {
       user_id: user.id,
       item_id: item.id,
@@ -21,6 +21,7 @@ export async function saveItem(item: SearchResult): Promise<void> {
     },
     { onConflict: "user_id,item_id,item_type" },
   );
+  if (error) console.error("saveItem failed:", error.message);
   revalidatePath("/");
 }
 
@@ -31,11 +32,12 @@ export async function removeItem(id: string, type: MediaType): Promise<void> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return;
-  await supabase
+  const { error } = await supabase
     .from("saved_items")
     .delete()
     .eq("user_id", user.id)
     .eq("item_id", id)
     .eq("item_type", type);
+  if (error) console.error("removeItem failed:", error.message);
   revalidatePath("/");
 }

@@ -15,11 +15,12 @@ export async function createBoardPost(
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return;
-  await supabase.from("board_posts").insert({
+  const { error } = await supabase.from("board_posts").insert({
     user_id: user.id,
     parent_id: parentId,
     body: text.slice(0, 4000),
   });
+  if (error) console.error("createBoardPost failed:", error.message);
   revalidatePath("/community");
 }
 
@@ -30,6 +31,11 @@ export async function deleteBoardPost(id: string): Promise<void> {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return;
-  await supabase.from("board_posts").delete().eq("id", id).eq("user_id", user.id);
+  const { error } = await supabase
+    .from("board_posts")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
+  if (error) console.error("deleteBoardPost failed:", error.message);
   revalidatePath("/community");
 }
