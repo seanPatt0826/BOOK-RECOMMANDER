@@ -1,7 +1,11 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBook } from "@/lib/sources/googleBooks";
 import { getMovie } from "@/lib/sources/tmdb";
-import type { MediaDetail } from "@/lib/sources/types";
+import { createClient } from "@/lib/supabase/server";
+import { isSaved } from "@/lib/saved";
+import SaveButton from "@/components/SaveButton";
+import type { MediaDetail, SearchResult } from "@/lib/sources/types";
 
 export default async function TitlePage({
   params,
@@ -30,6 +34,21 @@ export default async function TitlePage({
   }
 
   if (!detail) notFound();
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const saved = user ? await isSaved(detail.id, detail.type) : false;
+
+  const item: SearchResult = {
+    id: detail.id,
+    type: detail.type,
+    title: detail.title,
+    coverUrl: detail.coverUrl,
+    year: detail.year,
+    rating: detail.rating,
+  };
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
@@ -69,13 +88,16 @@ export default async function TitlePage({
             </p>
           )}
 
-          <button
-            type="button"
-            disabled
-            className="mt-6 cursor-not-allowed rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-400"
-          >
-            Save to my list (Phase 3)
-          </button>
+          {user ? (
+            <SaveButton item={item} initialSaved={saved} />
+          ) : (
+            <Link
+              href="/login"
+              className="mt-6 inline-block rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+            >
+              Sign in to save to your list
+            </Link>
+          )}
         </div>
       </div>
 
