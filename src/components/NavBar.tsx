@@ -26,7 +26,10 @@ export default async function NavBar() {
         <div className="ml-auto">
           {user ? (
             <form action="/auth/signout" method="post">
-              <button className="text-sm text-gray-600 hover:underline">
+              <button
+                type="submit"
+                className="text-sm text-gray-600 hover:underline"
+              >
                 Sign out
               </button>
             </form>
