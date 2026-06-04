@@ -8,6 +8,7 @@ export async function getFeaturedItems(): Promise<SearchResult[]> {
   const { data } = await supabase
     .from("featured_items")
     .select("item_id, item_type, title, cover_url")
-    .order("sort_order", { ascending: true });
+    .order("sort_order", { ascending: true })
+    .limit(20);
   return (data ?? []).map((row) => itemRowToResult(row as ItemRow));
 }
