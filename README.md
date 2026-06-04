@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ShelfMate
 
-## Getting Started
+A book & movie recommendation website: search Google Books and TMDB, save your
+own list, discuss titles with others, and get AI-powered recommendations and
+chat — built with Next.js, Tailwind, Supabase, and Claude.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Search** books (Google Books) and movies (TMDB) from a bar on every page, with history-based suggestions
+- **Title pages** with cover, description, rating, and comments
+- **Home feed** — a sliding carousel of featured + popular titles, plus your saved list
+- **Save** any title to your personal list
+- **Community** — a global discussion board plus per-title comments
+- **AI** — personalized recommendations on your home page and a chat assistant, powered by Claude
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Next.js 16 (App Router) · React 19 · Tailwind CSS v4 · Supabase (Postgres, Auth, RLS) · Anthropic Claude · Vitest · deploys on Vercel.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Local setup
 
-## Learn More
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. **Create a Supabase project** at <https://supabase.com>, then run the schema:
+   open the dashboard SQL Editor and paste/run `supabase/migrations/0001_initial_schema.sql`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Configure environment** — copy `.env.example` to `.env.local` and fill in:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   | Variable | Where to get it |
+   | --- | --- |
+   | `NEXT_PUBLIC_SUPABASE_URL` | Supabase → Project Settings → API |
+   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Project Settings → API (anon public) |
+   | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API (service role — keep secret) |
+   | `TMDB_API_KEY` | <https://www.themoviedb.org/settings/api> (v3 auth) — optional; books work without it |
+   | `ANTHROPIC_API_KEY` | <https://console.anthropic.com> — optional; AI features degrade gracefully without it |
+   | `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` for local dev |
 
-## Deploy on Vercel
+4. **Enable auth providers** — in Supabase → Authentication: Email is on by
+   default; for Google, add an OAuth client and add `http://localhost:3000/auth/callback`
+   to the redirect URLs.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+5. **Run**
+   ```bash
+   npm run dev
+   ```
+   Open <http://localhost:3000>.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Scripts
+
+- `npm run dev` — start the dev server
+- `npm run build` — production build
+- `npm test` — run the unit tests (Vitest)
+- `npm run lint` — lint
+
+## Deployment
+
+See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for deploying to Vercel.
+
+## Notes
+
+- The session-refresh entry point is `src/proxy.ts` (Next.js 16 renamed the `middleware` convention to `proxy`).
+- AI features (recommendations, chat) require `ANTHROPIC_API_KEY`; without it they hide/disable gracefully. The model is one constant (`AI_MODEL` in `src/lib/ai/client.ts`) — switch it to `claude-haiku-4-5` for lower cost.
