@@ -22,10 +22,11 @@ export default function LoginPage() {
 
   async function signInWithGoogle() {
     const supabase = createClient();
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${siteUrl}/auth/callback` },
     });
+    if (error) setStatus("error");
   }
 
   return (
