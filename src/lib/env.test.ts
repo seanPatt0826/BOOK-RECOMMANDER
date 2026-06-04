@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import { requireEnv } from "./env";
 
 describe("requireEnv", () => {
@@ -14,6 +14,11 @@ describe("requireEnv", () => {
   });
 
   it("throws a descriptive error when the variable is missing", () => {
+    expect(() => requireEnv(KEY)).toThrowError(/TEST_ENV_VALUE/);
+  });
+
+  it("throws a descriptive error when the variable is an empty string", () => {
+    process.env[KEY] = "";
     expect(() => requireEnv(KEY)).toThrowError(/TEST_ENV_VALUE/);
   });
 });
