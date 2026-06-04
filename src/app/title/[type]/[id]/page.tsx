@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isSaved } from "@/lib/saved";
 import SaveButton from "@/components/SaveButton";
 import type { MediaDetail, SearchResult } from "@/lib/sources/types";
+import CommentsSection from "@/components/CommentsSection";
 
 export default async function TitlePage({
   params,
@@ -101,12 +102,7 @@ export default async function TitlePage({
         </div>
       </div>
 
-      <section className="mt-10 border-t border-gray-200 pt-6">
-        <h2 className="text-lg font-semibold">Comments</h2>
-        <p className="mt-1 text-sm text-gray-500">
-          Comments arrive in Phase 4.
-        </p>
-      </section>
+      <CommentsSection itemId={detail.id} itemType={detail.type} />
     </main>
   );
 }
