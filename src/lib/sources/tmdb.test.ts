@@ -4,6 +4,7 @@ import {
   normalizeMovieDetail,
   ratingFromVoteAverage,
   searchMovies,
+  getPopularMovies,
 } from "./tmdb";
 
 const sampleMovie = {
@@ -77,5 +78,29 @@ describe("searchMovies", () => {
     expect(url).toContain("api.themoviedb.org/3/search/movie");
     expect(url).toContain("api_key=test-key");
     expect(url).toContain("query=matrix");
+  });
+});
+
+describe("getPopularMovies", () => {
+  beforeEach(() => {
+    process.env.TMDB_API_KEY = "test-key";
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    delete process.env.TMDB_API_KEY;
+  });
+
+  it("calls the popular endpoint with the key and maps results", async () => {
+    const json = { results: [sampleMovie] };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: true, json: async () => json }),
+    );
+    const results = await getPopularMovies();
+    expect(results[0].title).toBe("The Matrix");
+    const url = (fetch as unknown as { mock: { calls: string[][] } }).mock
+      .calls[0][0];
+    expect(url).toContain("/movie/popular");
+    expect(url).toContain("api_key=test-key");
   });
 });

@@ -58,3 +58,10 @@ export async function getMovie(id: string): Promise<MediaDetail | null> {
   if (!data || data.id === undefined) return null;
   return normalizeMovieDetail(data);
 }
+
+export async function getPopularMovies(): Promise<SearchResult[]> {
+  const key = requireEnv("TMDB_API_KEY");
+  const url = `${BASE}/movie/popular?api_key=${key}`;
+  const data = (await fetchJson(url)) as { results?: TmdbMovie[] };
+  return (data.results ?? []).map(normalizeMovieItem);
+}

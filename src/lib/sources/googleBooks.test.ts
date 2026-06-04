@@ -3,6 +3,7 @@ import {
   normalizeBookItem,
   normalizeBookDetail,
   searchBooks,
+  getPopularBooks,
 } from "./googleBooks";
 
 const sampleVolume = {
@@ -75,5 +76,22 @@ describe("searchBooks", () => {
       vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) }),
     );
     expect(await searchBooks("zzz")).toEqual([]);
+  });
+});
+
+describe("getPopularBooks", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("queries the fiction subject and maps the items", async () => {
+    const json = { items: [sampleVolume] };
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: true, json: async () => json }),
+    );
+    const results = await getPopularBooks();
+    expect(results[0].title).toBe("Dune");
+    const url = (fetch as unknown as { mock: { calls: string[][] } }).mock
+      .calls[0][0];
+    expect(url).toContain("subject:fiction");
   });
 });

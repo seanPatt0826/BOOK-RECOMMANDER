@@ -60,3 +60,9 @@ export async function getBook(id: string): Promise<MediaDetail | null> {
   if (!data || !data.id) return null;
   return normalizeBookDetail(data);
 }
+
+export async function getPopularBooks(): Promise<SearchResult[]> {
+  const url = `${BASE}?q=subject:fiction&orderBy=relevance&maxResults=12`;
+  const data = (await fetchJson(url)) as { items?: GoogleVolume[] };
+  return (data.items ?? []).map(normalizeBookItem);
+}
