@@ -2,6 +2,8 @@ import { getCarouselItems } from "@/lib/home";
 import { getSavedItems } from "@/lib/saved";
 import Carousel from "@/components/Carousel";
 import ResultCard from "@/components/ResultCard";
+import { Suspense } from "react";
+import HomeRecommendations from "@/components/HomeRecommendations";
 
 export default async function HomePage() {
   const [carousel, saved] = await Promise.all([
@@ -38,6 +40,16 @@ export default async function HomePage() {
           )}
         </aside>
       </div>
+
+      <Suspense
+        fallback={
+          <p className="mt-10 text-sm text-gray-400">
+            Finding recommendations for you…
+          </p>
+        }
+      >
+        <HomeRecommendations />
+      </Suspense>
     </main>
   );
 }
