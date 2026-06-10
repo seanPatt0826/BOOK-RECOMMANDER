@@ -1,5 +1,11 @@
 import { fetchJson } from "./http";
 import type { SearchResult, MediaDetail } from "./types";
+import {
+  searchBooksOpenLibrary,
+  getPopularBooksOpenLibrary,
+  getBookOpenLibrary,
+  OPEN_LIBRARY_ID,
+} from "./openLibrary";
 
 const BASE = "https://www.googleapis.com/books/v1/volumes";
 
@@ -48,12 +54,22 @@ export function normalizeBookDetail(volume: GoogleVolume): MediaDetail {
 }
 
 export async function searchBooks(query: string): Promise<SearchResult[]> {
-  const url = `${BASE}?q=${encodeURIComponent(query)}&maxResults=10`;
-  const data = (await fetchJson(url)) as { items?: GoogleVolume[] };
-  return (data.items ?? []).map(normalizeBookItem);
+  // Try Google Books first; fall back to Open Library when it fails (its
+  // keyless quota is often exhausted) or returns nothing.
+  try {
+    const url = `${BASE}?q=${encodeURIComponent(query)}&maxResults=10`;
+    const data = (await fetchJson(url)) as { items?: GoogleVolume[] };
+    const items = (data.items ?? []).map(normalizeBookItem);
+    if (items.length > 0) return items;
+  } catch {
+    // fall through
+  }
+  return searchBooksOpenLibrary(query);
 }
 
 export async function getBook(id: string): Promise<MediaDetail | null> {
+  // Open Library ids look like "OL893415W"; everything else is a Google id.
+  if (OPEN_LIBRARY_ID.test(id)) return getBookOpenLibrary(id);
   const data = (await fetchJson(`${BASE}/${encodeURIComponent(id)}`)) as
     | GoogleVolume
     | undefined;
@@ -62,7 +78,13 @@ export async function getBook(id: string): Promise<MediaDetail | null> {
 }
 
 export async function getPopularBooks(): Promise<SearchResult[]> {
-  const url = `${BASE}?q=subject:fiction&orderBy=relevance&maxResults=12`;
-  const data = (await fetchJson(url)) as { items?: GoogleVolume[] };
-  return (data.items ?? []).map(normalizeBookItem);
+  try {
+    const url = `${BASE}?q=subject:fiction&orderBy=relevance&maxResults=12`;
+    const data = (await fetchJson(url)) as { items?: GoogleVolume[] };
+    const items = (data.items ?? []).map(normalizeBookItem);
+    if (items.length > 0) return items;
+  } catch {
+    // fall through
+  }
+  return getPopularBooksOpenLibrary();
 }

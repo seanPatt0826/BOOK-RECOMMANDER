@@ -13,7 +13,7 @@ export default function DeleteCommentButton({
       type="button"
       onClick={() => startTransition(async () => { await action(); })}
       disabled={pending}
-      className="text-xs text-gray-400 hover:text-red-600 disabled:opacity-50"
+      className="text-xs text-muted transition hover:text-red-600 disabled:opacity-50 dark:hover:text-red-400"
     >
       {pending ? "Deleting…" : "Delete"}
     </button>

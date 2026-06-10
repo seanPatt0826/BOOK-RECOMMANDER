@@ -14,8 +14,8 @@ export default async function CommunityPage() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-2xl font-bold">Community board</h1>
-      <p className="mt-1 text-gray-600">
+      <h1 className="text-3xl font-semibold">Community board</h1>
+      <p className="mt-1 text-muted">
         Share what you&rsquo;re reading and watching.
       </p>
 
@@ -26,8 +26,8 @@ export default async function CommunityPage() {
           submitLabel="Post"
         />
       ) : (
-        <p className="mt-3 text-sm text-gray-500">
-          <Link href="/login" className="text-indigo-600 hover:underline">
+        <p className="mt-3 text-sm text-muted">
+          <Link href="/login" className="text-accent hover:underline">
             Sign in
           </Link>{" "}
           to post.
@@ -36,33 +36,35 @@ export default async function CommunityPage() {
 
       <ul className="mt-8 space-y-6">
         {thread.length === 0 && (
-          <li className="text-sm text-gray-500">
+          <li className="text-sm text-muted">
             No posts yet. Start the conversation!
           </li>
         )}
         {thread.map((post) => (
           <li
             key={post.id}
-            className="rounded border border-gray-200 bg-white p-4"
+            className="rounded-xl border border-edge bg-surface p-4"
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{post.authorName}</span>
+              <span className="text-sm font-medium text-accent">
+                {post.authorName}
+              </span>
               {user?.id === post.userId && (
                 <DeleteCommentButton
                   action={deleteBoardPost.bind(null, post.id)}
                 />
               )}
             </div>
-            <p className="mt-1 whitespace-pre-wrap text-sm text-gray-800">
+            <p className="mt-1 whitespace-pre-wrap text-sm text-ink/90">
               {post.body}
             </p>
 
             {post.replies.length > 0 && (
-              <ul className="mt-3 space-y-2 border-l-2 border-gray-100 pl-4">
+              <ul className="mt-3 space-y-2 border-l-2 border-edge pl-4">
                 {post.replies.map((reply) => (
                   <li key={reply.id}>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium">
+                      <span className="text-xs font-medium text-accent">
                         {reply.authorName}
                       </span>
                       {user?.id === reply.userId && (
@@ -71,7 +73,7 @@ export default async function CommunityPage() {
                         />
                       )}
                     </div>
-                    <p className="whitespace-pre-wrap text-sm text-gray-700">
+                    <p className="whitespace-pre-wrap text-sm text-ink/80">
                       {reply.body}
                     </p>
                   </li>

@@ -1,25 +1,238 @@
 @import "tailwindcss";
 
+/* Class-based dark mode: toggled by adding `.dark` to <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---- Reading Room palette ---------------------------------------------- */
+/* Light: warm cream parchment. Dark: cozy after-hours library. */
 :root {
-  --background: #f9fafb;
-  --foreground: #171717;
+  color-scheme: light;
+  --paper: #f4eee1;
+  --surface: #fffdf7;
+  --surface-2: #ebe2cf;
+  --ink: #2a2620;
+  --muted: #786d5c;
+  --edge: #e0d6c1;
+  --accent: #a4711a;
+  --accent-strong: #835811;
+  --accent-contrast: #fffaef;
+  --glow: rgba(164, 113, 26, 0.1);
+}
+
+.dark {
+  color-scheme: dark;
+  --paper: #16140e;
+  --surface: #211d15;
+  --surface-2: #2b261c;
+  --ink: #f0e8d6;
+  --muted: #b1a78f;
+  --edge: #383122;
+  --accent: #e2ad53;
+  --accent-strong: #f2c170;
+  --accent-contrast: #1a160c;
+  --glow: rgba(226, 173, 83, 0.14);
+}
+
+/* Expose the palette + fonts as Tailwind utilities (bg-surface, text-ink…). */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-edge: var(--edge);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-contrast: var(--accent-contrast);
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  /* Soft warm glow in the corners for atmosphere instead of a flat fill. */
+  background-image:
+    radial-gradient(1100px 560px at 100% -10%, var(--glow), transparent 60%),
+    radial-gradient(900px 520px at -10% 110%, var(--glow), transparent 60%);
+  background-attachment: fixed;
 }
 
-/* Visible keyboard-focus ring on all interactive elements. */
+/* Faint paper grain overlay for depth. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Keep real content above the grain layer. */
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-fraunces), ui-serif, Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+/* Gentle cross-fade when switching light/dark. */
 @layer base {
+  body,
+  nav,
+  footer,
+  aside,
+  section,
+  a,
+  button,
+  input,
+  textarea,
+  select {
+    transition:
+      background-color 0.35s ease,
+      border-color 0.35s ease,
+      color 0.35s ease;
+  }
+
+  /* Visible keyboard-focus ring on all interactive elements. */
   a:focus-visible,
   button:focus-visible,
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    outline: 2px solid #4f46e5;
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: 4px;
   }
+}
+
+/* Faded robots drifting down behind the AI chat box. */
+@keyframes shelf-fall {
+  0% {
+    transform: translateY(-44px) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.18;
+  }
+  85% {
+    opacity: 0.18;
+  }
+  100% {
+    transform: translateY(360px) rotate(22deg);
+    opacity: 0;
+  }
+}
+.shelf-robot {
+  position: absolute;
+  top: 0;
+  color: var(--accent);
+  animation: shelf-fall linear infinite;
+  will-change: transform, opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .shelf-robot {
+    animation: none;
+    opacity: 0.08;
+  }
+}
+
+/* Home title-screen background scenes (calm / nature / gradient). */
+@keyframes shelf-leaf {
+  0% {
+    transform: translateY(-12vh) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.55;
+  }
+  88% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translateY(112vh) rotate(280deg);
+    opacity: 0;
+  }
+}
+@keyframes shelf-sway {
+  0% {
+    transform: translateX(-7px);
+  }
+  100% {
+    transform: translateX(7px);
+  }
+}
+@keyframes shelf-grass {
+  0% {
+    transform: rotate(-3.5deg);
+  }
+  100% {
+    transform: rotate(3.5deg);
+  }
+}
+@keyframes shelf-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+.bg-leaf {
+  position: absolute;
+  top: 0;
+  animation: shelf-leaf linear infinite;
+  will-change: transform, opacity;
+}
+.bg-leaf svg {
+  animation: shelf-sway 3.5s ease-in-out infinite alternate;
+}
+.bg-grass-blade {
+  transform-origin: bottom center;
+  animation: shelf-grass 4s ease-in-out infinite alternate;
+}
+.bg-gradient-scene {
+  background: linear-gradient(
+    120deg,
+    rgba(226, 173, 83, 0.22),
+    rgba(150, 190, 140, 0.2),
+    rgba(120, 170, 200, 0.18),
+    rgba(226, 173, 83, 0.22)
+  );
+  background-size: 240% 240%;
+  animation: shelf-gradient 20s ease infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-leaf,
+  .bg-leaf svg,
+  .bg-grass-blade,
+  .bg-gradient-scene {
+    animation: none;
+  }
+  .bg-leaf {
+    opacity: 0.4;
+  }
+}
+
+/* Slim, themed scrollbars on the carousels. */
+.shelf-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--edge) transparent;
+}
+.shelf-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+.shelf-scroll::-webkit-scrollbar-thumb {
+  background: var(--edge);
+  border-radius: 999px;
 }

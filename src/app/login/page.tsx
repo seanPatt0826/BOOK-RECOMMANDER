@@ -1,74 +1,112 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "sent" | "error">("idle");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
+  const [isError, setIsError] = useState(false);
+  const router = useRouter();
 
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-
-  async function sendMagicLink(e: React.FormEvent) {
+  async function handleLogIn(e: React.FormEvent) {
     e.preventDefault();
+    setMessage(null);
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
-      options: { emailRedirectTo: `${siteUrl}/auth/callback` },
+      password,
     });
-    setStatus(error ? "error" : "sent");
+    if (error) {
+      setIsError(true);
+      setMessage(error.message);
+      return;
+    }
+    router.push("/");
+    router.refresh();
   }
 
-  async function signInWithGoogle() {
+  async function handleSignUp() {
+    setMessage(null);
+    if (password.length < 6) {
+      setIsError(true);
+      setMessage("Password must be at least 6 characters.");
+      return;
+    }
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${siteUrl}/auth/callback` },
-    });
-    if (error) setStatus("error");
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      setIsError(true);
+      setMessage(error.message);
+      return;
+    }
+    // If email confirmation is off, a session is returned and we're logged in.
+    if (data.session) {
+      router.push("/");
+      router.refresh();
+      return;
+    }
+    setIsError(false);
+    setMessage(
+      "Account created. Now click “Log in” with the same email and password.",
+    );
   }
 
   return (
-    <main className="mx-auto max-w-sm px-4 py-16">
-      <h1 className="mb-6 text-2xl font-bold">Sign in</h1>
-
-      <form onSubmit={sendMagicLink} className="space-y-3">
-        <input
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="you@example.com"
-          className="w-full rounded border border-gray-300 px-3 py-2"
-        />
-        <button
-          type="submit"
-          className="w-full rounded bg-indigo-600 px-3 py-2 font-medium text-white hover:bg-indigo-700"
-        >
-          Email me a magic link
-        </button>
-      </form>
-
-      {status === "sent" && (
-        <p className="mt-3 text-sm text-green-700">
-          Check your email for the sign-in link.
+    <main className="mx-auto max-w-sm px-4 py-20">
+      <div className="rounded-2xl border border-edge bg-surface p-7 shadow-sm">
+        <h1 className="mb-2 text-3xl font-semibold">Sign in</h1>
+        <p className="mb-6 text-sm text-muted">
+          New here? Pick a password and click <strong>Create account</strong>.
+          Already have one? Click <strong>Log in</strong>.
         </p>
-      )}
-      {status === "error" && (
-        <p className="mt-3 text-sm text-red-700">
-          Something went wrong. Please try again.
-        </p>
-      )}
 
-      <div className="my-6 text-center text-sm text-gray-500">or</div>
+        <form onSubmit={handleLogIn} className="space-y-3">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            className="w-full rounded-lg border border-edge bg-paper px-3 py-2 text-ink placeholder:text-muted/70 focus:border-accent"
+          />
+          <input
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password (at least 6 characters)"
+            className="w-full rounded-lg border border-edge bg-paper px-3 py-2 text-ink placeholder:text-muted/70 focus:border-accent"
+          />
+          <button
+            type="submit"
+            className="w-full rounded-lg bg-accent px-3 py-2 font-medium text-accent-contrast transition hover:bg-accent-strong"
+          >
+            Log in
+          </button>
+          <button
+            type="button"
+            onClick={handleSignUp}
+            className="w-full rounded-lg border border-accent px-3 py-2 font-medium text-accent transition hover:bg-surface-2"
+          >
+            Create account
+          </button>
+        </form>
 
-      <button
-        onClick={signInWithGoogle}
-        className="w-full rounded border border-gray-300 px-3 py-2 font-medium hover:bg-gray-50"
-      >
-        Continue with Google
-      </button>
+        {message && (
+          <p
+            className={`mt-4 text-sm ${
+              isError
+                ? "text-red-600 dark:text-red-400"
+                : "text-green-700 dark:text-green-400"
+            }`}
+          >
+            {message}
+          </p>
+        )}
+      </div>
     </main>
   );
 }

@@ -32,10 +32,10 @@ export default function SaveButton({
       onClick={toggle}
       disabled={pending}
       aria-pressed={saved}
-      className={`mt-6 rounded border px-3 py-1.5 text-sm transition ${
+      className={`mt-6 rounded-lg border px-4 py-2 text-sm font-medium transition ${
         saved
-          ? "border-indigo-600 bg-indigo-600 text-white hover:bg-indigo-700"
-          : "border-gray-300 text-gray-700 hover:bg-gray-50"
+          ? "border-accent bg-accent text-accent-contrast hover:bg-accent-strong"
+          : "border-edge text-ink/80 hover:border-accent hover:text-accent"
       } ${pending ? "opacity-60" : ""}`}
     >
       {saved ? "✓ Saved" : "Save to my list"}

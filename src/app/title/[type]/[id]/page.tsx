@@ -27,7 +27,7 @@ export default async function TitlePage({
   if (failed) {
     return (
       <main className="mx-auto max-w-3xl px-4 py-12">
-        <p className="text-gray-600">
+        <p className="text-muted">
           We couldn&rsquo;t load this title right now. Please try again later.
         </p>
       </main>
@@ -55,7 +55,7 @@ export default async function TitlePage({
     <main className="mx-auto max-w-3xl px-4 py-12">
       <div className="flex flex-col gap-6 sm:flex-row">
         <div className="w-40 flex-shrink-0">
-          <div className="flex aspect-[2/3] items-center justify-center overflow-hidden rounded bg-gray-100">
+          <div className="flex aspect-[2/3] items-center justify-center overflow-hidden rounded-xl border border-edge bg-surface-2 shadow-sm">
             {detail.coverUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -64,27 +64,27 @@ export default async function TitlePage({
                 className="h-full w-full object-cover"
               />
             ) : (
-              <span className="text-xs text-gray-400">No cover</span>
+              <span className="text-xs text-muted">No cover</span>
             )}
           </div>
         </div>
 
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">{detail.title}</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-3xl font-semibold">{detail.title}</h1>
+          <p className="mt-1 text-sm text-accent">
             <span className="capitalize">{detail.type}</span>
             {detail.year ? ` · ${detail.year}` : ""}
             {detail.rating !== null ? ` · ★ ${detail.rating}` : ""}
           </p>
 
           {detail.creators.length > 0 && (
-            <p className="mt-2 text-sm text-gray-700">
+            <p className="mt-2 text-sm text-muted">
               {detail.creators.join(", ")}
             </p>
           )}
 
           {detail.description && (
-            <p className="mt-4 text-sm leading-relaxed text-gray-800">
+            <p className="mt-4 text-sm leading-relaxed text-ink/90">
               {detail.description}
             </p>
           )}
@@ -94,7 +94,7 @@ export default async function TitlePage({
           ) : (
             <Link
               href="/login"
-              className="mt-6 inline-block rounded border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-50"
+              className="mt-6 inline-block rounded-lg border border-edge px-3 py-1.5 text-sm text-ink/80 transition hover:border-accent hover:text-accent"
             >
               Sign in to save to your list
             </Link>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import SearchBar from "@/components/SearchBar";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default async function NavBar() {
   const supabase = await createClient();
@@ -9,34 +10,52 @@ export default async function NavBar() {
   } = await supabase.auth.getUser();
 
   return (
-    <nav className="border-b border-gray-200 bg-white">
-      <div className="mx-auto flex max-w-5xl items-center gap-6 px-4 py-3">
-        <Link href="/" className="font-bold text-indigo-600">
+    <nav className="sticky top-0 z-40 border-b border-edge bg-surface/80 backdrop-blur-md">
+      <div className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
+        <Link
+          href="/"
+          className="font-display text-xl font-semibold tracking-tight text-accent"
+        >
           ShelfMate
         </Link>
-        <Link href="/search" className="text-sm hover:underline">
-          Search
-        </Link>
-        <Link href="/community" className="text-sm hover:underline">
-          Community
-        </Link>
-        <Link href="/chat" className="text-sm hover:underline">
-          AI Chat
-        </Link>
+        <div className="hidden items-center gap-5 sm:flex">
+          <Link
+            href="/search"
+            className="text-sm text-ink/75 transition hover:text-accent"
+          >
+            Search
+          </Link>
+          <Link
+            href="/community"
+            className="text-sm text-ink/75 transition hover:text-accent"
+          >
+            Community
+          </Link>
+          <Link
+            href="/chat"
+            className="text-sm text-ink/75 transition hover:text-accent"
+          >
+            AI Chat
+          </Link>
+        </div>
 
-        <div className="ml-auto flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-3">
           <SearchBar />
+          <ThemeToggle />
           {user ? (
             <form action="/auth/signout" method="post">
               <button
                 type="submit"
-                className="text-sm text-gray-600 hover:underline"
+                className="text-sm text-muted transition hover:text-accent"
               >
                 Sign out
               </button>
             </form>
           ) : (
-            <Link href="/login" className="text-sm hover:underline">
+            <Link
+              href="/login"
+              className="rounded-full bg-accent px-4 py-1.5 text-sm font-medium text-accent-contrast transition hover:bg-accent-strong"
+            >
               Sign in
             </Link>
           )}

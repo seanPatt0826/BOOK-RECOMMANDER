@@ -4,6 +4,7 @@ import Carousel from "@/components/Carousel";
 import ResultCard from "@/components/ResultCard";
 import { Suspense } from "react";
 import HomeRecommendations from "@/components/HomeRecommendations";
+import HomeBackground from "@/components/HomeBackground";
 
 export default async function HomePage() {
   const [carousel, saved] = await Promise.all([
@@ -12,22 +13,32 @@ export default async function HomePage() {
   ]);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-3xl font-bold">Welcome to ShelfMate</h1>
-      <p className="mt-1 text-gray-600">
-        Discover books and movies, and keep your own list.
-      </p>
+    <main className="mx-auto max-w-6xl px-4 py-12">
+      <header className="flex flex-wrap items-start justify-between gap-4">
+        <div className="max-w-2xl">
+          <p className="mb-2 text-sm font-medium uppercase tracking-[0.2em] text-accent">
+            Books &amp; Movies
+          </p>
+          <h1 className="text-4xl font-semibold leading-tight sm:text-5xl">
+            Welcome to ShelfMate
+          </h1>
+          <p className="mt-3 text-lg text-muted">
+            Discover your next great read or watch — and keep your own shelf.
+          </p>
+        </div>
+        <HomeBackground />
+      </header>
 
-      <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_18rem]">
+      <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_18rem]">
         <section>
-          <h2 className="mb-3 text-xl font-semibold">Discover</h2>
+          <h2 className="mb-4 text-2xl font-semibold">Discover</h2>
           <Carousel items={carousel} />
         </section>
 
         <aside>
-          <h2 className="mb-3 text-xl font-semibold">Your list</h2>
+          <h2 className="mb-4 text-2xl font-semibold">Your shelf</h2>
           {saved.length === 0 ? (
-            <p className="text-sm text-gray-500">
+            <p className="rounded-xl border border-dashed border-edge bg-surface/50 p-4 text-sm text-muted">
               You haven&rsquo;t saved anything yet. Open a title and tap
               &ldquo;Save to my list&rdquo;.
             </p>
@@ -43,7 +54,7 @@ export default async function HomePage() {
 
       <Suspense
         fallback={
-          <p className="mt-10 text-sm text-gray-400">
+          <p className="mt-12 text-sm text-muted">
             Finding recommendations for you…
           </p>
         }

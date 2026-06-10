@@ -30,7 +30,7 @@ export default function SearchBar() {
   }
 
   return (
-    <div className="relative w-full max-w-xs">
+    <div className="relative w-full max-w-[10rem] sm:max-w-xs">
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -44,13 +44,13 @@ export default function SearchBar() {
           onFocus={loadSuggestions}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
           placeholder="Search books & movies"
-          className="w-full rounded border border-gray-300 px-3 py-1.5 text-sm"
+          className="w-full rounded-full border border-edge bg-surface px-4 py-1.5 text-sm text-ink placeholder:text-muted/70 focus:border-accent"
           aria-label="Search books and movies"
         />
       </form>
 
       {open && suggestions.length > 0 && (
-        <ul className="absolute z-10 mt-1 w-full overflow-hidden rounded border border-gray-200 bg-white shadow">
+        <ul className="absolute z-30 mt-1 w-full overflow-hidden rounded-xl border border-edge bg-surface shadow-lg">
           {suggestions.map((s) => (
             <li key={s}>
               <button
@@ -60,7 +60,7 @@ export default function SearchBar() {
                   setValue(s);
                   go(s);
                 }}
-                className="block w-full px-3 py-1.5 text-left text-sm hover:bg-gray-50"
+                className="block w-full px-4 py-2 text-left text-sm text-ink/90 transition hover:bg-surface-2 hover:text-accent"
               >
                 {s}
               </button>

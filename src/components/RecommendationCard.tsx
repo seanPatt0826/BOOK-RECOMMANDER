@@ -10,9 +10,9 @@ export default function RecommendationCard({ rec }: { rec: Recommendation }) {
   return (
     <Link
       href={href}
-      className="flex gap-3 rounded border border-gray-200 bg-white p-3 transition hover:shadow"
+      className="flex gap-3 rounded-xl border border-edge bg-surface p-3 transition hover:-translate-y-0.5 hover:border-accent hover:shadow-md"
     >
-      <div className="flex h-24 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded bg-gray-100">
+      <div className="flex h-24 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-surface-2">
         {cover ? (
           // External covers come from many hosts — plain <img> by design.
           // eslint-disable-next-line @next/next/no-img-element
@@ -22,16 +22,16 @@ export default function RecommendationCard({ rec }: { rec: Recommendation }) {
             className="h-full w-full object-cover"
           />
         ) : (
-          <span className="px-1 text-center text-[10px] text-gray-400">
+          <span className="px-1 text-center text-[10px] text-muted">
             {rec.type}
           </span>
         )}
       </div>
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium" title={rec.title}>
+        <p className="truncate text-sm font-medium text-ink" title={rec.title}>
           {rec.title}
         </p>
-        <p className="mt-1 text-xs text-gray-600">{rec.reason}</p>
+        <p className="mt-1 text-xs text-muted">{rec.reason}</p>
       </div>
     </Link>
   );
