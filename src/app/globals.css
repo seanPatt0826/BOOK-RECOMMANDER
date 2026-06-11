@@ -3,34 +3,52 @@
 /* Class-based dark mode: toggled by adding `.dark` to <html>. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ---- Reading Room palette ---------------------------------------------- */
-/* Light: warm cream parchment. Dark: cozy after-hours library. */
+/* ---- Reading Room · Modern Editorial -----------------------------------
+   Light: clean warm paper with a confident amber accent.
+   Dark:  deep espresso study, lit by warm amber + a hint of rose/violet. */
 :root {
   color-scheme: light;
-  --paper: #f4eee1;
-  --surface: #fffdf7;
-  --surface-2: #ebe2cf;
-  --ink: #2a2620;
-  --muted: #786d5c;
-  --edge: #e0d6c1;
-  --accent: #a4711a;
-  --accent-strong: #835811;
-  --accent-contrast: #fffaef;
-  --glow: rgba(164, 113, 26, 0.1);
+  --paper: #f6f2ea;
+  --surface: #fffefb;
+  --surface-2: #efe9dd;
+  --ink: #1f1c17;
+  --muted: #756a59;
+  --edge: #e7dfd0;
+  --accent: #b65d1f;
+  --accent-strong: #98480f;
+  --accent-contrast: #fff8ef;
+  /* Secondary hues used only for the aurora glow + gradient text. */
+  --rose: #d97757;
+  --violet: #7c6cc4;
+  --glow: rgba(182, 93, 31, 0.1);
+  --ring: rgba(182, 93, 31, 0.35);
+  /* Soft, layered shadows for floating surfaces. */
+  --shadow-sm: 0 1px 2px rgba(31, 28, 23, 0.06), 0 1px 3px rgba(31, 28, 23, 0.05);
+  --shadow-md: 0 6px 16px -6px rgba(31, 28, 23, 0.16),
+    0 2px 6px -2px rgba(31, 28, 23, 0.08);
+  --shadow-lg: 0 24px 50px -16px rgba(31, 28, 23, 0.28),
+    0 8px 20px -10px rgba(31, 28, 23, 0.14);
 }
 
 .dark {
   color-scheme: dark;
-  --paper: #16140e;
-  --surface: #211d15;
-  --surface-2: #2b261c;
-  --ink: #f0e8d6;
-  --muted: #b1a78f;
-  --edge: #383122;
-  --accent: #e2ad53;
-  --accent-strong: #f2c170;
-  --accent-contrast: #1a160c;
-  --glow: rgba(226, 173, 83, 0.14);
+  --paper: #14110c;
+  --surface: #1d1812;
+  --surface-2: #261f16;
+  --ink: #f1e9da;
+  --muted: #aa9f88;
+  --edge: #342c1f;
+  --accent: #f0b364;
+  --accent-strong: #ffc879;
+  --accent-contrast: #1a150c;
+  --rose: #e8987a;
+  --violet: #9b8ad8;
+  --glow: rgba(240, 179, 100, 0.16);
+  --ring: rgba(240, 179, 100, 0.4);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 22px -8px rgba(0, 0, 0, 0.6), 0 2px 8px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 30px 60px -18px rgba(0, 0, 0, 0.7),
+    0 10px 24px -12px rgba(0, 0, 0, 0.5);
 }
 
 /* Expose the palette + fonts as Tailwind utilities (bg-surface, text-ink…). */
@@ -44,8 +62,12 @@
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-accent-contrast: var(--accent-contrast);
+  --color-rose: var(--rose);
+  --color-violet: var(--violet);
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
   --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --shadow-soft: var(--shadow-md);
+  --shadow-float: var(--shadow-lg);
 }
 
 body {
@@ -57,6 +79,8 @@ body {
     radial-gradient(1100px 560px at 100% -10%, var(--glow), transparent 60%),
     radial-gradient(900px 520px at -10% 110%, var(--glow), transparent 60%);
   background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 /* Faint paper grain overlay for depth. */
@@ -66,7 +90,7 @@ body::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.035;
+  opacity: 0.04;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -80,7 +104,60 @@ h1,
 h2,
 h3 {
   font-family: var(--font-fraunces), ui-serif, Georgia, serif;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+}
+
+/* Warm amber → rose gradient text for headline accents. */
+.text-gradient {
+  background-image: linear-gradient(
+    105deg,
+    var(--accent-strong),
+    var(--accent) 45%,
+    var(--rose)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Frosted glass surface — used by the nav + floating panels. */
+.glass {
+  background-color: color-mix(in srgb, var(--surface) 72%, transparent);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+}
+
+/* Modern floating card with a gradient hairline that warms on hover. */
+.card {
+  position: relative;
+  background-color: var(--surface);
+  border: 1px solid var(--edge);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--ring);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Tiny pill chip for eyebrows + tags. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--edge);
+  background-color: color-mix(in srgb, var(--surface) 70%, transparent);
+  color: var(--muted);
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
 }
 
 /* Gentle cross-fade when switching light/dark. */
@@ -109,7 +186,70 @@ h3 {
   select:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: 6px;
+  }
+}
+
+/* ---- Aurora glow: slow-drifting warm orbs behind the hero -------------- */
+@keyframes aurora-drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(6%, -5%) scale(1.12);
+  }
+  66% {
+    transform: translate(-5%, 4%) scale(0.94);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+.aurora-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(56px);
+  opacity: 0.5;
+  pointer-events: none;
+  will-change: transform;
+  animation: aurora-drift 18s ease-in-out infinite;
+}
+
+/* ---- Staggered entrance reveals (hero load) --------------------------- */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.reveal {
+  opacity: 0;
+  animation: reveal-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.reveal-1 {
+  animation-delay: 0.05s;
+}
+.reveal-2 {
+  animation-delay: 0.16s;
+}
+.reveal-3 {
+  animation-delay: 0.27s;
+}
+.reveal-4 {
+  animation-delay: 0.38s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora-orb {
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    animation: none;
   }
 }
 
