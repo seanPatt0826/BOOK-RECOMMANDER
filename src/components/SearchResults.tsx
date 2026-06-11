@@ -109,7 +109,7 @@ export default function SearchResults({ items }: { items: SearchResult[] }) {
             : "Nothing here for this filter."}
         </p>
       ) : (
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="mt-6 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
           {shown.map((item) => (
             <ResultCard key={`${item.type}-${item.id}`} item={item} />
           ))}
