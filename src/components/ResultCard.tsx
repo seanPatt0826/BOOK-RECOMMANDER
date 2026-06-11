@@ -25,6 +25,11 @@ export default function ResultCard({ item }: { item: SearchResult }) {
         <span className="absolute right-2 top-2 rounded-full bg-surface/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent backdrop-blur">
           {item.type}
         </span>
+        {item.year && (
+          <span className="absolute left-2 top-2 rounded-full bg-ink/70 px-2 py-0.5 text-[10px] font-semibold text-paper backdrop-blur">
+            {item.year}
+          </span>
+        )}
       </div>
       <div className="p-3">
         <p
