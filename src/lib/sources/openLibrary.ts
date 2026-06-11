@@ -5,6 +5,7 @@ import type { SearchResult, MediaDetail } from "./types";
 // Google Books, whose keyless quota is unreliable.
 const SEARCH = "https://openlibrary.org/search.json";
 const FIELDS = "key,title,author_name,first_publish_year,cover_i,ratings_average";
+const DAY = 86_400;
 
 interface OLDoc {
   key?: string;
@@ -68,6 +69,19 @@ export async function searchBooksOpenLibrary(
 export async function getPopularBooksOpenLibrary(): Promise<SearchResult[]> {
   const url = `${SEARCH}?q=subject:fiction&sort=rating&limit=12&fields=${FIELDS}`;
   return mapDocs(await fetchJson(url));
+}
+
+// Books for a single genre/subject (e.g. "fantasy", "science_fiction"). Cached
+// for a day since these shelves barely change and the home page renders many.
+export async function getBooksBySubjectOpenLibrary(
+  subject: string,
+): Promise<SearchResult[]> {
+  const url =
+    `${SEARCH}?q=subject:${encodeURIComponent(subject)}` +
+    `&sort=rating&limit=16&fields=${FIELDS}`;
+  return mapDocs(
+    await fetchJson(url, { next: { revalidate: DAY } } as RequestInit),
+  );
 }
 
 interface OLWork {

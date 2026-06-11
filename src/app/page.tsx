@@ -5,6 +5,7 @@ import ResultCard from "@/components/ResultCard";
 import { Suspense } from "react";
 import HomeRecommendations from "@/components/HomeRecommendations";
 import HomeBackground from "@/components/HomeBackground";
+import GenreShelves from "@/components/GenreShelves";
 
 export default async function HomePage() {
   const [carousel, saved] = await Promise.all([
@@ -104,6 +105,14 @@ export default async function HomePage() {
         }
       >
         <HomeRecommendations />
+      </Suspense>
+
+      <Suspense
+        fallback={
+          <p className="mt-16 text-sm text-muted">Loading more books…</p>
+        }
+      >
+        <GenreShelves />
       </Suspense>
     </main>
   );

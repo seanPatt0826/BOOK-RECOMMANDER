@@ -1,5 +1,5 @@
 import { getFeaturedItems } from "@/lib/featured";
-import { getPopularBooks } from "@/lib/sources/googleBooks";
+import { getPopularBooks, getBooksBySubject } from "@/lib/sources/googleBooks";
 import { getPopularMovies } from "@/lib/sources/tmdb";
 import { interleave } from "@/lib/interleave";
 import type { SearchResult } from "@/lib/sources/types";
@@ -25,6 +25,45 @@ export function combineCarousel(
 ): SearchResult[] {
   const popular = interleave(books, movies);
   return dedupe([...featured, ...popular]).slice(0, limit);
+}
+
+// Genre shelves shown on the home page. `subject` uses Open Library's
+// underscore form (also valid for Google Books).
+export const BOOK_GENRES: { label: string; subject: string }[] = [
+  { label: "Fantasy", subject: "fantasy" },
+  { label: "Mystery & Thriller", subject: "thriller" },
+  { label: "Science Fiction", subject: "science_fiction" },
+  { label: "Romance", subject: "romance" },
+  { label: "Horror", subject: "horror" },
+  { label: "History", subject: "history" },
+  { label: "Young Adult", subject: "young_adult_fiction" },
+  { label: "Biography", subject: "biography" },
+];
+
+export interface GenreShelf {
+  label: string;
+  subject: string;
+  items: SearchResult[];
+}
+
+// Prefer titles that have a cover so the shelves look full; dedupe, cap.
+function tidyShelf(items: SearchResult[], limit = 12): SearchResult[] {
+  const deduped = dedupe(items);
+  const withCover = deduped.filter((i) => i.coverUrl);
+  const withoutCover = deduped.filter((i) => !i.coverUrl);
+  return [...withCover, ...withoutCover].slice(0, limit);
+}
+
+/** Fetch each genre's books in parallel. A failing genre is dropped, not fatal. */
+export async function getGenreShelves(): Promise<GenreShelf[]> {
+  const results = await Promise.allSettled(
+    BOOK_GENRES.map((g) => getBooksBySubject(g.subject)),
+  );
+  return BOOK_GENRES.map((g, i) => {
+    const r = results[i];
+    const items = r.status === "fulfilled" ? tidyShelf(r.value) : [];
+    return { ...g, items };
+  }).filter((shelf) => shelf.items.length > 0);
 }
 
 /** Assemble carousel content. Resilient: a failing source contributes []. */

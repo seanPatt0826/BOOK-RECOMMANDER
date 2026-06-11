@@ -3,6 +3,7 @@ import type { SearchResult, MediaDetail } from "./types";
 import {
   searchBooksOpenLibrary,
   getPopularBooksOpenLibrary,
+  getBooksBySubjectOpenLibrary,
   getBookOpenLibrary,
   OPEN_LIBRARY_ID,
 } from "./openLibrary";
@@ -87,4 +88,19 @@ export async function getPopularBooks(): Promise<SearchResult[]> {
     // fall through
   }
   return getPopularBooksOpenLibrary();
+}
+
+// Books for one genre/subject; Google first, Open Library as the fallback.
+export async function getBooksBySubject(
+  subject: string,
+): Promise<SearchResult[]> {
+  try {
+    const url = `${BASE}?q=subject:${encodeURIComponent(subject)}&orderBy=relevance&maxResults=16`;
+    const data = (await fetchJson(url)) as { items?: GoogleVolume[] };
+    const items = (data.items ?? []).map(normalizeBookItem);
+    if (items.length >= 6) return items;
+  } catch {
+    // fall through
+  }
+  return getBooksBySubjectOpenLibrary(subject);
 }
