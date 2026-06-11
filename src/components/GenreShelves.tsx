@@ -1,9 +1,9 @@
 import { getGenreShelves } from "@/lib/home";
-import Carousel from "@/components/Carousel";
+import GenreBrowser from "@/components/GenreBrowser";
 
-// A stack of genre shelves ("Fantasy", "Romance", …), each a scrollable row.
-// Rendered inside a <Suspense> on the home page so its fetches don't block the
-// hero and main carousel from painting.
+// Fetches the genre shelves on the server, then hands them to the client-side
+// GenreBrowser which renders the filter pills + shelves. Rendered inside a
+// <Suspense> on the home page so its fetches don't block the hero.
 export default async function GenreShelves() {
   const shelves = await getGenreShelves();
   if (shelves.length === 0) return null;
@@ -15,17 +15,7 @@ export default async function GenreShelves() {
         <h2 className="text-2xl font-semibold">Browse by genre</h2>
       </div>
 
-      <div className="space-y-10">
-        {shelves.map((shelf) => (
-          <div key={shelf.subject}>
-            <div className="mb-3 flex items-baseline justify-between">
-              <h3 className="text-lg font-semibold text-ink">{shelf.label}</h3>
-              <span className="chip">{shelf.items.length} books</span>
-            </div>
-            <Carousel items={shelf.items} />
-          </div>
-        ))}
-      </div>
+      <GenreBrowser shelves={shelves} />
     </section>
   );
 }
