@@ -13,7 +13,7 @@ export default function GenreBrowser({ shelves }: { shelves: GenreShelf[] }) {
     active === "all" ? shelves : shelves.filter((s) => s.subject === active);
 
   const pill = (selected: boolean) =>
-    `rounded-full px-4 py-1.5 text-sm font-semibold transition ${
+    `shrink-0 whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-semibold transition ${
       selected
         ? "bg-accent text-accent-contrast shadow-[var(--shadow-sm)]"
         : "border border-edge bg-surface/60 text-ink/75 hover:border-accent hover:text-accent"
@@ -21,25 +21,27 @@ export default function GenreBrowser({ shelves }: { shelves: GenreShelf[] }) {
 
   return (
     <div>
-      {/* Filter row */}
-      <div className="mb-8 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => setActive("all")}
-          className={pill(active === "all")}
-        >
-          All
-        </button>
-        {shelves.map((s) => (
+      {/* Filter row — sticks just below the navbar while you scroll. */}
+      <div className="glass sticky top-14 z-30 -mx-4 mb-8 border-y border-edge/60 px-4 py-3">
+        <div className="shelf-scroll flex gap-2 overflow-x-auto">
           <button
-            key={s.subject}
             type="button"
-            onClick={() => setActive(s.subject)}
-            className={pill(active === s.subject)}
+            onClick={() => setActive("all")}
+            className={pill(active === "all")}
           >
-            {s.label}
+            All
           </button>
-        ))}
+          {shelves.map((s) => (
+            <button
+              key={s.subject}
+              type="button"
+              onClick={() => setActive(s.subject)}
+              className={pill(active === s.subject)}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Shelves */}
