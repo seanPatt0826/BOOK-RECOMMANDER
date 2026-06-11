@@ -38,6 +38,12 @@ export const BOOK_GENRES: { label: string; subject: string }[] = [
   { label: "History", subject: "history" },
   { label: "Young Adult", subject: "young_adult_fiction" },
   { label: "Biography", subject: "biography" },
+  { label: "Comics & Graphic Novels", subject: "comics_and_graphic_novels" },
+  { label: "Poetry", subject: "poetry" },
+  { label: "Adventure", subject: "adventure" },
+  { label: "Classics", subject: "classics" },
+  { label: "Cooking", subject: "cooking" },
+  { label: "Self-Help", subject: "self-help" },
 ];
 
 export interface GenreShelf {
