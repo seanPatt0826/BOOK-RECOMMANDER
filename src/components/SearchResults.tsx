@@ -5,23 +5,23 @@ import ResultCard from "@/components/ResultCard";
 import type { SearchResult } from "@/lib/sources/types";
 
 type Filter = "all" | "book" | "movie";
-type Sort = "newest" | "oldest";
+type Sort = "relevance" | "newest" | "oldest";
 
 // Sort by release year. Titles with no known year always sink to the bottom.
-function byYear(items: SearchResult[], sort: Sort): SearchResult[] {
+function byYear(items: SearchResult[], newest: boolean): SearchResult[] {
   return [...items].sort((a, b) => {
     const ya = a.year ? parseInt(a.year, 10) : null;
     const yb = b.year ? parseInt(b.year, 10) : null;
     if (ya === null && yb === null) return 0;
     if (ya === null) return 1;
     if (yb === null) return -1;
-    return sort === "newest" ? yb - ya : ya - yb;
+    return newest ? yb - ya : ya - yb;
   });
 }
 
 export default function SearchResults({ items }: { items: SearchResult[] }) {
   const [filter, setFilter] = useState<Filter>("all");
-  const [sort, setSort] = useState<Sort>("newest");
+  const [sort, setSort] = useState<Sort>("relevance");
 
   const bookCount = items.filter((i) => i.type === "book").length;
   const movieCount = items.filter((i) => i.type === "movie").length;
@@ -35,7 +35,9 @@ export default function SearchResults({ items }: { items: SearchResult[] }) {
 
   const filtered =
     filter === "all" ? items : items.filter((i) => i.type === filter);
-  const shown = byYear(filtered, sort);
+  // "relevance" keeps the server's best-match order; otherwise sort by year.
+  const shown =
+    sort === "relevance" ? filtered : byYear(filtered, sort === "newest");
 
   if (items.length === 0) {
     return (
@@ -77,29 +79,30 @@ export default function SearchResults({ items }: { items: SearchResult[] }) {
         ))}
         </div>
 
-        {/* Newest / Oldest sort toggle. */}
-        <button
-          type="button"
-          onClick={() => setSort(sort === "newest" ? "oldest" : "newest")}
-          aria-label={`Sorted ${sort} first — click to switch`}
-          className="inline-flex items-center gap-2 rounded-full border border-edge bg-surface px-4 py-2 text-sm font-medium text-ink transition hover:border-accent hover:text-accent"
-        >
-          <svg
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M3 6h13M3 12h9M3 18h5" />
-            <path d="m17 8 4-4 4 4" transform="translate(-4 0)" />
-            <path d="M17 4v16" transform="translate(-4 0)" />
-          </svg>
-          {sort === "newest" ? "Newest first" : "Oldest first"}
-        </button>
+        {/* Sort: Best match (default) / Newest / Oldest. */}
+        <div className="inline-flex items-center gap-1 rounded-full border border-edge bg-surface p-1">
+          {(
+            [
+              { key: "relevance", label: "Best match" },
+              { key: "newest", label: "Newest" },
+              { key: "oldest", label: "Oldest" },
+            ] as { key: Sort; label: string }[]
+          ).map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              onClick={() => setSort(opt.key)}
+              aria-pressed={sort === opt.key}
+              className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
+                sort === opt.key
+                  ? "bg-accent text-accent-contrast shadow-[var(--shadow-sm)]"
+                  : "text-ink/70 hover:text-accent"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {shown.length === 0 ? (

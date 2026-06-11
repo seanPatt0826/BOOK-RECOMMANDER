@@ -1,6 +1,7 @@
 import { searchBooks } from "./googleBooks";
 import { searchMovies } from "./tmdb";
 import { interleave } from "@/lib/interleave";
+import { rankByRelevance } from "./relevance";
 import type { SearchResult } from "./types";
 
 function settledOrEmpty(
@@ -16,5 +17,9 @@ export async function searchAll(query: string): Promise<SearchResult[]> {
     searchBooks(query),
     searchMovies(query),
   ]);
-  return interleave(settledOrEmpty(books), settledOrEmpty(movies));
+  // Filter each source to titles that actually match the query, best first,
+  // then interleave so books and movies both surface near the top.
+  const rankedBooks = rankByRelevance(query, settledOrEmpty(books));
+  const rankedMovies = rankByRelevance(query, settledOrEmpty(movies));
+  return interleave(rankedBooks, rankedMovies);
 }
