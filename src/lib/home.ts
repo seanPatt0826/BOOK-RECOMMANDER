@@ -44,6 +44,9 @@ export const BOOK_GENRES: { label: string; subject: string }[] = [
   { label: "Classics", subject: "classics" },
   { label: "Cooking", subject: "cooking" },
   { label: "Self-Help", subject: "self-help" },
+  { label: "Travel", subject: "travel" },
+  { label: "Business", subject: "business" },
+  { label: "Kids' Books", subject: "juvenile_fiction" },
 ];
 
 export interface GenreShelf {
