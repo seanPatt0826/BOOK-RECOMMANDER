@@ -25,9 +25,18 @@ function cleanTitle(title: string): string {
   return title.replace(/\s*\((?:\d{4}\s+)?film(?:\s+series)?\)\s*$/i, "").trim();
 }
 
-function yearFrom(title: string, extract?: string): string | null {
-  const fromTitle = title.match(/\((\d{4})\s+film\)/i);
+export function yearFrom(title: string, extract?: string): string | null {
+  // Most reliable: Wikipedia's own disambiguator, e.g. "Dog Man (2025 film)".
+  const fromTitle = title.match(/\((\d{4})\s+film/i);
   if (fromTitle) return fromTitle[1];
+  // Film intros canonically read "… is a/an/the YYYY … film". Pull the year
+  // from that construction rather than the first 4-digit number anywhere — the
+  // intro often cites a source-novel or earlier-instalment year first, which
+  // would otherwise win (e.g. a 2025 film "based on the 1999 graphic novel").
+  const fromIntro = extract?.match(
+    /\bis\s+(?:a|an|the)\s+(?:[\w-]+\s+){0,6}?((?:19|20)\d{2})\b/i,
+  );
+  if (fromIntro) return fromIntro[1];
   const fromExtract = extract?.match(/\b(?:19|20)\d{2}\b/);
   return fromExtract ? fromExtract[0] : null;
 }
