@@ -62,10 +62,10 @@ export default async function TitlePage({
             <img
               src={detail.coverUrl}
               alt={`Cover of ${detail.title}`}
-              className="w-full rounded-xl border border-edge bg-surface-2 shadow-sm"
+              className="w-full rounded-3xl border border-edge/60 bg-surface-2 shadow-md"
             />
           ) : (
-            <div className="flex aspect-[2/3] items-center justify-center overflow-hidden rounded-xl border border-edge bg-surface-2 shadow-sm">
+            <div className="flex aspect-[2/3] items-center justify-center overflow-hidden rounded-3xl border border-edge/60 bg-surface-2 shadow-md">
               <span className="text-xs text-muted">No cover</span>
             </div>
           )}
