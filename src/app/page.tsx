@@ -1,7 +1,6 @@
 import { getCarouselItems } from "@/lib/home";
 import { getSavedItems } from "@/lib/saved";
 import Carousel from "@/components/Carousel";
-import ResultCard from "@/components/ResultCard";
 import { Suspense } from "react";
 import HomeRecommendations from "@/components/HomeRecommendations";
 import HomeBackground from "@/components/HomeBackground";
@@ -68,35 +67,7 @@ export default async function HomePage() {
         </div>
       </header>
 
-      <div className="mt-14 grid gap-12 lg:grid-cols-[1fr_18rem]">
-        <section>
-          <div className="mb-5 flex items-center gap-3">
-            <span className="h-5 w-1 rounded-full bg-accent" />
-            <h2 className="text-2xl font-semibold">Discover</h2>
-          </div>
-          <Carousel items={carousel} />
-        </section>
-
-        <aside>
-          <div className="mb-5 flex items-center gap-3">
-            <span className="h-5 w-1 rounded-full bg-rose" />
-            <h2 className="text-2xl font-semibold">Your shelf</h2>
-          </div>
-          {saved.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-edge bg-surface/50 p-5 text-sm text-muted">
-              You haven&rsquo;t saved anything yet. Open a title and tap
-              &ldquo;Save to my list&rdquo;.
-            </p>
-          ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {saved.map((item) => (
-                <ResultCard key={`${item.type}-${item.id}`} item={item} />
-              ))}
-            </div>
-          )}
-        </aside>
-      </div>
-
+      {/* Recommendations — a horizontal scroll bar across the top. */}
       <Suspense
         fallback={
           <p className="mt-12 text-sm text-muted">
@@ -107,13 +78,31 @@ export default async function HomePage() {
         <HomeRecommendations />
       </Suspense>
 
+      {/* Content on the left, the genre nav on the right. Discover rides along
+          in the main column. */}
       <Suspense
         fallback={
-          <p className="mt-16 text-sm text-muted">Loading more books…</p>
+          <p className="mt-14 text-sm text-muted">Loading shelves…</p>
         }
       >
-        <GenreShelves />
+        <GenreShelves discover={carousel} />
       </Suspense>
+
+      {/* Your shelf — saved titles, as their own scroll bar. */}
+      <section className="mt-16">
+        <div className="mb-5 flex items-center gap-3">
+          <span className="h-5 w-1 rounded-full bg-rose" />
+          <h2 className="text-2xl font-semibold">Your shelf</h2>
+        </div>
+        {saved.length === 0 ? (
+          <p className="rounded-2xl border border-dashed border-edge bg-surface/50 p-5 text-sm text-muted">
+            You haven&rsquo;t saved anything yet. Open a title and tap
+            &ldquo;Save to my list&rdquo;.
+          </p>
+        ) : (
+          <Carousel items={saved} />
+        )}
+      </section>
     </main>
   );
 }

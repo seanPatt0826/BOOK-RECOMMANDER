@@ -7,10 +7,19 @@ export default async function HomeRecommendations() {
 
   return (
     <section className="mt-12">
-      <h2 className="mb-4 text-2xl font-semibold">Recommended for you</h2>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mb-4 flex items-center gap-3">
+        <span className="h-5 w-1 rounded-full bg-accent" />
+        <h2 className="text-2xl font-semibold">Recommended for you</h2>
+      </div>
+      {/* Horizontal scroll bar — drag/scroll through the picks. */}
+      <div className="shelf-scroll flex gap-3 overflow-x-auto pb-3">
         {recs.map((rec, i) => (
-          <RecommendationCard key={`${rec.type}-${rec.title}-${i}`} rec={rec} />
+          <div
+            key={`${rec.type}-${rec.title}-${i}`}
+            className="w-72 flex-shrink-0"
+          >
+            <RecommendationCard rec={rec} />
+          </div>
         ))}
       </div>
     </section>
