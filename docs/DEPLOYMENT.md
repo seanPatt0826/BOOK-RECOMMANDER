@@ -50,12 +50,9 @@ production.
 ## 6. Verify
 
 - Sign in with email magic link and with Google.
-- Search, open a title, save it, comment, and try the AI chat.
+- Search, open a title, save it, and comment.
 
 ## Hardening notes (optional, for real traffic)
 
-- `/api/chat` requires sign-in but has no rate limiting — add per-user rate
-  limiting (e.g. via Vercel KV / Upstash) before opening to the public, since it
-  calls a paid model.
 - The home-page AI recommendations call Claude on each load for signed-in users
   with history — add a short-lived per-user cache to cut cost.

@@ -1,8 +1,8 @@
 # ShelfMate
 
 A book & movie recommendation website: search Google Books and TMDB, save your
-own list, discuss titles with others, and get AI-powered recommendations and
-chat — built with Next.js, Tailwind, Supabase, and Claude.
+own list, discuss titles with others, and get AI-powered recommendations —
+built with Next.js, Tailwind, Supabase, and Claude.
 
 ## Features
 
@@ -11,7 +11,7 @@ chat — built with Next.js, Tailwind, Supabase, and Claude.
 - **Home feed** — a sliding carousel of featured + popular titles, plus your saved list
 - **Save** any title to your personal list
 - **Community** — a global discussion board plus per-title comments
-- **AI** — personalized recommendations on your home page and a chat assistant, powered by Claude
+- **AI** — personalized recommendations on your home page, powered by Claude
 
 ## Tech stack
 
@@ -62,4 +62,4 @@ See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for deploying to Vercel.
 ## Notes
 
 - The session-refresh entry point is `src/proxy.ts` (Next.js 16 renamed the `middleware` convention to `proxy`).
-- AI features (recommendations, chat) require `ANTHROPIC_API_KEY`; without it they hide/disable gracefully. The model is one constant (`AI_MODEL` in `src/lib/ai/client.ts`) — switch it to `claude-haiku-4-5` for lower cost.
+- AI recommendations require `ANTHROPIC_API_KEY`; without it they hide gracefully. The model is one constant (`AI_MODEL` in `src/lib/ai/client.ts`) — switch it to `claude-haiku-4-5` for lower cost.

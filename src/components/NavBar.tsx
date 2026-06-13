@@ -27,7 +27,6 @@ export default async function NavBar() {
           {[
             { href: "/search", label: "Search" },
             { href: "/community", label: "Community" },
-            { href: "/chat", label: "AI Chat" },
           ].map((link) => (
             <Link
               key={link.href}

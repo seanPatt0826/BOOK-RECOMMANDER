@@ -264,37 +264,6 @@ h3 {
   }
 }
 
-/* Faded robots drifting down behind the AI chat box. */
-@keyframes shelf-fall {
-  0% {
-    transform: translateY(-44px) rotate(0deg);
-    opacity: 0;
-  }
-  15% {
-    opacity: 0.18;
-  }
-  85% {
-    opacity: 0.18;
-  }
-  100% {
-    transform: translateY(360px) rotate(22deg);
-    opacity: 0;
-  }
-}
-.shelf-robot {
-  position: absolute;
-  top: 0;
-  color: var(--accent);
-  animation: shelf-fall linear infinite;
-  will-change: transform, opacity;
-}
-@media (prefers-reduced-motion: reduce) {
-  .shelf-robot {
-    animation: none;
-    opacity: 0.08;
-  }
-}
-
 /* Home title-screen background scenes (calm / nature / gradient). */
 @keyframes shelf-leaf {
   0% {
