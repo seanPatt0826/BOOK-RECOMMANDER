@@ -89,6 +89,31 @@ interface OLWork {
   description?: string | { value?: string };
   covers?: number[];
   authors?: { author?: { key?: string } }[];
+  // Present on many (not all) works, in varied formats: "1937",
+  // "September 3, 1954", "1988-10". We only need the year out of it.
+  first_publish_date?: string;
+}
+
+// Pull a 4-digit year (1000–2999) out of an Open Library date string.
+export function yearFromDate(date?: string): string | null {
+  const match = date?.match(/\b[12]\d{3}\b/);
+  return match ? match[0] : null;
+}
+
+// The work endpoint's own first_publish_date is unreliable — it often reflects
+// one arbitrary edition (e.g. The Lord of the Rings reads "September 3, 2001").
+// The search index's first_publish_year is computed as the earliest across all
+// editions, so it's both accurate and identical to the year on the result card.
+async function firstPublishYear(workId: string): Promise<string | null> {
+  try {
+    const data = (await fetchJson(
+      `${SEARCH}?q=key:/works/${encodeURIComponent(workId)}&fields=first_publish_year&limit=1`,
+    )) as { docs?: { first_publish_year?: number }[] };
+    const year = data.docs?.[0]?.first_publish_year;
+    return typeof year === "number" ? String(year) : null;
+  } catch {
+    return null;
+  }
 }
 
 async function authorName(key?: string): Promise<string | null> {
@@ -116,18 +141,22 @@ export async function getBookOpenLibrary(
       ? data.description
       : (data.description?.value ?? null);
 
-  const creators = (
-    await Promise.all(
+  // Prefer the search index's earliest year; fall back to the work's own
+  // date only if the index has none. Fetched alongside the author lookups.
+  const [creators, indexYear] = await Promise.all([
+    Promise.all(
       (data.authors ?? []).slice(0, 3).map((a) => authorName(a.author?.key)),
-    )
-  ).filter((name): name is string => Boolean(name));
+    ).then((names) => names.filter((name): name is string => Boolean(name))),
+    firstPublishYear(id),
+  ]);
+  const year = indexYear ?? yearFromDate(data.first_publish_date);
 
   return {
     id,
     type: "book",
     title: data.title,
     coverUrl: coverUrl(data.covers?.[0], "L"),
-    year: null,
+    year,
     rating: null,
     description,
     creators,
