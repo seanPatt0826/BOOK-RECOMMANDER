@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 type Mode = "calm" | "nature" | "gradient";
 
@@ -69,8 +70,10 @@ function Grass() {
 
 export default function HomeBackground() {
   const [mode, setMode] = useState<Mode>("calm");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     try {
       const saved = localStorage.getItem("shelf-bg") as Mode | null;
       if (saved === "calm" || saved === "nature" || saved === "gradient") {
@@ -90,47 +93,57 @@ export default function HomeBackground() {
     }
   }
 
+  {/* Full-screen scene behind the page. All three are mounted and cross-fade
+      via opacity for a smooth in/out when switching. Rendered through a portal
+      to <body> so its `fixed` positioning resolves to the viewport — inside the
+      hero it would be trapped by the reveal animation's transform. */}
+  const scene = (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none overflow-hidden"
+      // Inline styles so the global `body > * { position: relative; z-index: 1 }`
+      // rule (unlayered, beats Tailwind utilities) can't override the fixed,
+      // behind-everything positioning this needs as a portaled <body> child.
+      style={{ position: "fixed", inset: 0, zIndex: -10 }}
+    >
+      {/* Nature: drifting leaves + swaying grass. */}
+      <div
+        className={`absolute inset-0 transition-opacity duration-700 ${
+          mode === "nature" ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        {LEAVES.map((l, i) => (
+          <span
+            key={i}
+            className="bg-leaf"
+            style={{
+              left: l.left,
+              color: l.color,
+              animationDelay: l.delay,
+              animationDuration: l.duration,
+            }}
+          >
+            <Leaf size={l.size} />
+          </span>
+        ))}
+        <div className="opacity-40 dark:opacity-30">
+          <Grass />
+        </div>
+      </div>
+
+      {/* Gradient: slowly shifting warm colour wash. */}
+      <div
+        className={`bg-gradient-scene absolute inset-0 transition-opacity duration-700 ${
+          mode === "gradient" ? "opacity-100" : "opacity-0"
+        }`}
+      />
+      {/* Calm: nothing extra — the page's own warm glow shows through. */}
+    </div>
+  );
+
   return (
     <>
-      {/* Full-screen scene behind the page. All three are mounted and
-          cross-fade via opacity for a smooth in/out when switching. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
-      >
-        {/* Nature: drifting leaves + swaying grass. */}
-        <div
-          className={`absolute inset-0 transition-opacity duration-700 ${
-            mode === "nature" ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          {LEAVES.map((l, i) => (
-            <span
-              key={i}
-              className="bg-leaf"
-              style={{
-                left: l.left,
-                color: l.color,
-                animationDelay: l.delay,
-                animationDuration: l.duration,
-              }}
-            >
-              <Leaf size={l.size} />
-            </span>
-          ))}
-          <div className="opacity-40 dark:opacity-30">
-            <Grass />
-          </div>
-        </div>
-
-        {/* Gradient: slowly shifting warm colour wash. */}
-        <div
-          className={`bg-gradient-scene absolute inset-0 transition-opacity duration-700 ${
-            mode === "gradient" ? "opacity-100" : "opacity-0"
-          }`}
-        />
-        {/* Calm: nothing extra — the page's own warm glow shows through. */}
-      </div>
+      {mounted && createPortal(scene, document.body)}
 
       {/* The picker. */}
       <label className="flex items-center gap-2 rounded-full border border-edge bg-surface/70 px-3 py-1.5 text-sm backdrop-blur">

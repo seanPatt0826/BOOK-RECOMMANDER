@@ -188,6 +188,17 @@ h3 {
     outline-offset: 2px;
     border-radius: 6px;
   }
+
+  /* Anything clickable shows the hand cursor — browsers default <button> and
+     friends to the arrow, which makes them read as non-interactive. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  select,
+  label:has(> select),
+  a[href] {
+    cursor: pointer;
+  }
 }
 
 /* ---- Aurora glow: slow-drifting warm orbs behind the hero -------------- */
