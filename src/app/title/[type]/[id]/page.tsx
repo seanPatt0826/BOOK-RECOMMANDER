@@ -55,18 +55,20 @@ export default async function TitlePage({
     <main className="mx-auto max-w-3xl px-4 py-12">
       <div className="flex flex-col gap-6 sm:flex-row">
         <div className="w-40 flex-shrink-0">
-          <div className="flex aspect-[2/3] items-center justify-center overflow-hidden rounded-xl border border-edge bg-surface-2 shadow-sm">
-            {detail.coverUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={detail.coverUrl}
-                alt={`Cover of ${detail.title}`}
-                className="h-full w-full object-cover"
-              />
-            ) : (
+          {detail.coverUrl ? (
+            // Let the cover set its own height so the frame hugs the artwork
+            // instead of forcing a 2:3 box that leaves dead space.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={detail.coverUrl}
+              alt={`Cover of ${detail.title}`}
+              className="w-full rounded-xl border border-edge bg-surface-2 shadow-sm"
+            />
+          ) : (
+            <div className="flex aspect-[2/3] items-center justify-center overflow-hidden rounded-xl border border-edge bg-surface-2 shadow-sm">
               <span className="text-xs text-muted">No cover</span>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <div className="flex-1">
