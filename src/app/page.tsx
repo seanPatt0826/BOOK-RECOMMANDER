@@ -2,7 +2,6 @@ import { getCarouselItems } from "@/lib/home";
 import { getSavedItems } from "@/lib/saved";
 import Carousel from "@/components/Carousel";
 import { Suspense } from "react";
-import HomeRecommendations from "@/components/HomeRecommendations";
 import HomeBackground from "@/components/HomeBackground";
 import GenreShelves from "@/components/GenreShelves";
 
@@ -66,17 +65,6 @@ export default async function HomePage() {
           </div>
         </div>
       </header>
-
-      {/* Recommendations — a horizontal scroll bar across the top. */}
-      <Suspense
-        fallback={
-          <p className="mt-12 text-sm text-muted">
-            Finding recommendations for you…
-          </p>
-        }
-      >
-        <HomeRecommendations />
-      </Suspense>
 
       {/* Content on the left, the genre nav on the right. Discover rides along
           in the main column. */}

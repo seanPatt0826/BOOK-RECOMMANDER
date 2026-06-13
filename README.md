@@ -1,8 +1,8 @@
 # ShelfMate
 
 A book & movie recommendation website: search Google Books and TMDB, save your
-own list, discuss titles with others, and get AI-powered recommendations —
-built with Next.js, Tailwind, Supabase, and Claude.
+own list, and discuss titles with others — built with Next.js, Tailwind, and
+Supabase.
 
 ## Features
 
@@ -11,7 +11,6 @@ built with Next.js, Tailwind, Supabase, and Claude.
 - **Home feed** — a sliding carousel of featured + popular titles, plus your saved list
 - **Save** any title to your personal list
 - **Community** — a global discussion board plus per-title comments
-- **AI** — personalized recommendations on your home page, powered by Claude
 
 ## Tech stack
 
@@ -35,7 +34,6 @@ Next.js 16 (App Router) · React 19 · Tailwind CSS v4 · Supabase (Postgres, Au
    | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase → Project Settings → API (anon public) |
    | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API (service role — keep secret) |
    | `TMDB_API_KEY` | <https://www.themoviedb.org/settings/api> (v3 auth) — optional; books work without it |
-   | `ANTHROPIC_API_KEY` | <https://console.anthropic.com> — optional; AI features degrade gracefully without it |
    | `NEXT_PUBLIC_SITE_URL` | `http://localhost:3000` for local dev |
 
 4. **Enable auth providers** — in Supabase → Authentication: Email is on by
@@ -62,4 +60,3 @@ See [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) for deploying to Vercel.
 ## Notes
 
 - The session-refresh entry point is `src/proxy.ts` (Next.js 16 renamed the `middleware` convention to `proxy`).
-- AI recommendations require `ANTHROPIC_API_KEY`; without it they hide gracefully. The model is one constant (`AI_MODEL` in `src/lib/ai/client.ts`) — switch it to `claude-haiku-4-5` for lower cost.

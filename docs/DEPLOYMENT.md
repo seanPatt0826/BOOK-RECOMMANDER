@@ -27,7 +27,6 @@ as `.env.local`, with production values:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon public key |
 | `SUPABASE_SERVICE_ROLE_KEY` | service role key (secret) |
 | `TMDB_API_KEY` | your TMDB key (optional) |
-| `ANTHROPIC_API_KEY` | your Anthropic key (optional) |
 | `NEXT_PUBLIC_SITE_URL` | your production URL, e.g. `https://shelfmate.vercel.app` |
 
 ## 4. Point auth redirects at the production domain
@@ -51,8 +50,3 @@ production.
 
 - Sign in with email magic link and with Google.
 - Search, open a title, save it, and comment.
-
-## Hardening notes (optional, for real traffic)
-
-- The home-page AI recommendations call Claude on each load for signed-in users
-  with history — add a short-lived per-user cache to cut cost.
