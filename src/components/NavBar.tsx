@@ -26,6 +26,7 @@ export default async function NavBar() {
         <div className="hidden items-center gap-1 sm:flex">
           {[
             { href: "/search", label: "Search" },
+            { href: "/uap", label: "UAP" },
             { href: "/community", label: "Community" },
           ].map((link) => (
             <Link
