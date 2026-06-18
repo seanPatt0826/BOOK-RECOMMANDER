@@ -147,7 +147,7 @@ const POPULAR = [
 
 export async function getPopularMoviesKeyless(): Promise<SearchResult[]> {
   const results = await Promise.all(
-    POPULAR.map(async (wikiTitle) => {
+    POPULAR.map(async (wikiTitle): Promise<SearchResult | null> => {
       try {
         const data = await summary(wikiTitle);
         if (!data?.title) return null;
