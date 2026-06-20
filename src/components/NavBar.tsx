@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import SearchBar from "@/components/SearchBar";
 import ThemeToggle from "@/components/ThemeToggle";
+import Button from "@/components/ui/Button";
 
 export default async function NavBar() {
   const supabase = await createClient();
@@ -44,20 +45,16 @@ export default async function NavBar() {
           <ThemeToggle />
           {user ? (
             <form action="/auth/signout" method="post">
-              <button
-                type="submit"
-                className="rounded-full border border-edge px-4 py-1.5 text-sm font-medium text-muted transition hover:border-accent hover:text-accent"
-              >
+              <Button type="submit" variant="secondary" size="sm" shape="pill"
+                className="text-muted">
                 Sign out
-              </button>
+              </Button>
             </form>
           ) : (
-            <Link
-              href="/login"
-              className="rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-contrast shadow-[var(--shadow-sm)] transition hover:-translate-y-0.5 hover:bg-accent-strong"
-            >
+            <Button href="/login" variant="primary" size="sm" shape="pill"
+              className="shadow-[var(--shadow-sm)] hover:-translate-y-0.5">
               Sign in
-            </Link>
+            </Button>
           )}
         </div>
       </div>

@@ -4,6 +4,7 @@ import Carousel from "@/components/Carousel";
 import { Suspense } from "react";
 import HomeBackground from "@/components/HomeBackground";
 import GenreShelves from "@/components/GenreShelves";
+import Button from "@/components/ui/Button";
 
 export default async function HomePage() {
   const [carousel, saved] = await Promise.all([
@@ -46,18 +47,14 @@ export default async function HomePage() {
               and let ShelfMate point you toward what to read or watch next.
             </p>
             <div className="reveal reveal-4 mt-7 flex flex-wrap items-center gap-3">
-              <a
-                href="/search"
-                className="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-accent-contrast shadow-[var(--shadow-md)] transition hover:-translate-y-0.5 hover:bg-accent-strong"
-              >
+              <Button href="/search" variant="primary" size="lg" shape="pill"
+                className="shadow-[var(--shadow-md)] hover:-translate-y-0.5">
                 Start exploring
-              </a>
-              <a
-                href="/community"
-                className="rounded-full border border-edge bg-surface/60 px-6 py-3 text-sm font-semibold text-ink transition hover:border-accent hover:text-accent"
-              >
+              </Button>
+              <Button href="/community" variant="secondary" size="lg" shape="pill"
+                className="bg-surface/60">
                 Visit the community
-              </a>
+              </Button>
             </div>
           </div>
           <div className="reveal reveal-4">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Button from "@/components/ui/Button";
 
 export default function CommentForm({
   action,
@@ -34,13 +35,10 @@ export default function CommentForm({
         maxLength={4000}
         className="w-full rounded-lg border border-edge bg-paper px-3 py-2 text-sm text-ink placeholder:text-muted/70 focus:border-accent"
       />
-      <button
-        type="submit"
-        disabled={pending || body.trim().length === 0}
-        className="mt-2 rounded-lg bg-accent px-3 py-1.5 text-sm font-medium text-accent-contrast transition hover:bg-accent-strong disabled:opacity-50"
-      >
+      <Button type="submit" variant="primary" size="md" shape="rounded"
+        disabled={pending || body.trim().length === 0} className="mt-2 py-1.5">
         {pending ? "Posting…" : submitLabel}
-      </button>
+      </Button>
     </form>
   );
 }

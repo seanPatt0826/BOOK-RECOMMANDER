@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { saveItem, removeItem } from "@/lib/saved-actions";
 import type { SearchResult } from "@/lib/sources/types";
+import Button from "@/components/ui/Button";
 
 export default function SaveButton({
   item,
@@ -27,18 +28,15 @@ export default function SaveButton({
   }
 
   return (
-    <button
+    <Button
       type="button"
       onClick={toggle}
       disabled={pending}
       aria-pressed={saved}
-      className={`mt-6 rounded-lg border px-4 py-2 text-sm font-medium transition ${
-        saved
-          ? "border-accent bg-accent text-accent-contrast hover:bg-accent-strong"
-          : "border-edge text-ink/80 hover:border-accent hover:text-accent"
-      } ${pending ? "opacity-60" : ""}`}
+      variant={saved ? "primary" : "secondary"}
+      className={`mt-6 ${saved ? "" : "text-ink/80"} ${pending ? "opacity-60" : ""}`}
     >
       {saved ? "✓ Saved" : "Save to my list"}
-    </button>
+    </Button>
   );
 }

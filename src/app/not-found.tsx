@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Button from "@/components/ui/Button";
 
 export default function NotFound() {
   return (
@@ -7,12 +7,9 @@ export default function NotFound() {
       <p className="mt-3 text-muted">
         We couldn&rsquo;t find what you were looking for.
       </p>
-      <Link
-        href="/"
-        className="mt-6 inline-block rounded-full bg-accent px-5 py-2 text-sm font-medium text-accent-contrast transition hover:bg-accent-strong"
-      >
+      <Button href="/" variant="primary" shape="pill" className="mt-6">
         Back to home
-      </Link>
+      </Button>
     </main>
   );
 }

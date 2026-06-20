@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import Button from "@/components/ui/Button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -80,19 +81,11 @@ export default function LoginPage() {
             placeholder="Password (at least 6 characters)"
             className="w-full rounded-lg border border-edge bg-paper px-3 py-2 text-ink placeholder:text-muted/70 focus:border-accent"
           />
-          <button
-            type="submit"
-            className="w-full rounded-lg bg-accent px-3 py-2 font-medium text-accent-contrast transition hover:bg-accent-strong"
-          >
-            Log in
-          </button>
-          <button
-            type="button"
-            onClick={handleSignUp}
-            className="w-full rounded-lg border border-accent px-3 py-2 font-medium text-accent transition hover:bg-surface-2"
-          >
+          <Button type="submit" variant="primary" className="w-full">Log in</Button>
+          <Button type="button" onClick={handleSignUp} variant="secondary"
+            className="w-full border-accent text-accent hover:bg-surface-2">
             Create account
-          </button>
+          </Button>
         </form>
 
         {message && (
