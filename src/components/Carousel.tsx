@@ -25,7 +25,7 @@ export default function Carousel({ items }: { items: SearchResult[] }) {
         type="button"
         onClick={() => scroll(-1)}
         aria-label="Scroll left"
-        className="absolute left-1 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-edge bg-surface/90 text-ink shadow-md backdrop-blur transition hover:scale-105 hover:border-accent hover:bg-accent hover:text-accent-contrast"
+        className="glass absolute left-1 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-edge text-ink shadow-md transition hover:scale-105 hover:border-accent hover:bg-accent hover:text-accent-contrast"
       >
         <svg
           width="20"
@@ -57,7 +57,7 @@ export default function Carousel({ items }: { items: SearchResult[] }) {
         type="button"
         onClick={() => scroll(1)}
         aria-label="Scroll right"
-        className="absolute right-1 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-edge bg-surface/90 text-ink shadow-md backdrop-blur transition hover:scale-105 hover:border-accent hover:bg-accent hover:text-accent-contrast"
+        className="glass absolute right-1 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-edge text-ink shadow-md transition hover:scale-105 hover:border-accent hover:bg-accent hover:text-accent-contrast"
       >
         <svg
           width="20"
