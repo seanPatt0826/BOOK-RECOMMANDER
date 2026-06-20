@@ -1,11 +1,13 @@
 import Link from "next/link";
+import Card from "@/components/ui/Card";
 import type { UapCase } from "@/lib/uap/types";
 
 export default function CaseCard({ uapCase }: { uapCase: UapCase }) {
   return (
-    <Link
+    <Card
+      as={Link}
       href={`/uap/${encodeURIComponent(uapCase.slug)}`}
-      className="card group flex flex-col gap-2 p-4"
+      className="group flex flex-col gap-2 p-4"
     >
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="font-medium text-ink transition group-hover:text-accent">
@@ -24,6 +26,6 @@ export default function CaseCard({ uapCase }: { uapCase: UapCase }) {
           </span>
         ))}
       </div>
-    </Link>
+    </Card>
   );
 }

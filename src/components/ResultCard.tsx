@@ -1,11 +1,13 @@
 import Link from "next/link";
+import Card from "@/components/ui/Card";
 import type { SearchResult } from "@/lib/sources/types";
 
 export default function ResultCard({ item }: { item: SearchResult }) {
   return (
-    <Link
+    <Card
+      as={Link}
       href={`/title/${item.type}/${encodeURIComponent(item.id)}`}
-      className="card group block overflow-hidden"
+      className="group block overflow-hidden"
     >
       <div className="relative flex aspect-[2/3] items-center justify-center overflow-hidden rounded-t-2xl bg-surface-2">
         {item.coverUrl ? (
@@ -45,6 +47,6 @@ export default function ResultCard({ item }: { item: SearchResult }) {
             : ""}
         </p>
       </div>
-    </Link>
+    </Card>
   );
 }
