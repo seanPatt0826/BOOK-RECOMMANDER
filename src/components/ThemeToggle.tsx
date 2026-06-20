@@ -10,7 +10,7 @@ export default function ThemeToggle() {
     typeof document !== "undefined" &&
     document.documentElement.classList.contains("dark"),
   );
-  const [mounted, setMounted] = useState(() => typeof document !== "undefined");
+  const mounted = typeof document !== "undefined";
 
   function toggle() {
     const next = !dark;

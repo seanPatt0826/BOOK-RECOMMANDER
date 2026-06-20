@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 
 type Mode = "calm" | "nature" | "gradient";
@@ -68,21 +68,23 @@ function Grass() {
   );
 }
 
-export default function HomeBackground() {
-  const [mode, setMode] = useState<Mode>("calm");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    try {
-      const saved = localStorage.getItem("shelf-bg") as Mode | null;
-      if (saved === "calm" || saved === "nature" || saved === "gradient") {
-        setMode(saved);
-      }
-    } catch {
-      // Storage blocked — just use the calm default.
+// Read the saved scene once, safely (SSR / blocked storage → "calm").
+function readSavedMode(): Mode {
+  if (typeof window === "undefined") return "calm";
+  try {
+    const saved = localStorage.getItem("shelf-bg");
+    if (saved === "calm" || saved === "nature" || saved === "gradient") {
+      return saved;
     }
-  }, []);
+  } catch {
+    // Storage blocked — fall through to the calm default.
+  }
+  return "calm";
+}
+
+export default function HomeBackground() {
+  const [mode, setMode] = useState<Mode>(readSavedMode);
+  const mounted = typeof window !== "undefined";
 
   function choose(next: Mode) {
     setMode(next);
