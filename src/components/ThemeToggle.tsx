@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function ThemeToggle() {
-  // Start matching what the no-flash script already decided, then sync on mount.
-  const [dark, setDark] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
-    setMounted(true);
-  }, []);
+  // The no-flash script in layout.tsx applies `.dark` before hydration, so the
+  // DOM is the source of truth. Read it once at mount via lazy initial state —
+  // no effect, no cascading render. SSR has no `document`, so default to light.
+  const [dark, setDark] = useState(() =>
+    typeof document !== "undefined" &&
+    document.documentElement.classList.contains("dark"),
+  );
+  const [mounted, setMounted] = useState(() => typeof document !== "undefined");
 
   function toggle() {
     const next = !dark;
