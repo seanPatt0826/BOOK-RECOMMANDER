@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import CaseCard from "@/components/CaseCard";
+import NavItem from "@/components/ui/NavItem";
 import SectionHeader from "@/components/ui/SectionHeader";
 import type { UapCase } from "@/lib/uap/types";
 
@@ -18,13 +19,6 @@ export default function CaseBrowser({
 
   const visible =
     active === "all" ? cases : cases.filter((c) => c.tags.includes(active));
-
-  const navItem = (selected: boolean) =>
-    `flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium transition ${
-      selected
-        ? "bg-accent text-accent-contrast shadow-[var(--shadow-sm)]"
-        : "text-ink/75 hover:bg-surface-2 hover:text-accent"
-    }`;
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_16rem]">
@@ -44,23 +38,15 @@ export default function CaseBrowser({
         <div className="lg:sticky lg:top-20">
           <SectionHeader accent="violet" size="lg" className="mb-4">Filter by tag</SectionHeader>
           <nav className="flex flex-col gap-1">
-            <button
-              type="button"
-              onClick={() => setActive("all")}
-              className={navItem(active === "all")}
-            >
-              <span>All cases</span>
-              <span className="text-xs opacity-70">{cases.length}</span>
-            </button>
+            <NavItem selected={active === "all"} onClick={() => setActive("all")} label="All cases" count={cases.length} />
             {tags.map((t) => (
-              <button
+              <NavItem
                 key={t}
-                type="button"
+                selected={active === t}
                 onClick={() => setActive(t)}
-                className={navItem(active === t)}
-              >
-                <span className="truncate">{t}</span>
-              </button>
+                label={t}
+                truncate
+              />
             ))}
           </nav>
         </div>

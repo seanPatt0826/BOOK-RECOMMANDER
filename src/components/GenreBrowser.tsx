@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Carousel from "@/components/Carousel";
+import NavItem from "@/components/ui/NavItem";
 import SectionHeader from "@/components/ui/SectionHeader";
 import type { GenreShelf } from "@/lib/home";
 import type { SearchResult } from "@/lib/sources/types";
@@ -21,13 +22,6 @@ export default function GenreBrowser({
 
   const visible =
     active === "all" ? shelves : shelves.filter((s) => s.subject === active);
-
-  const navItem = (selected: boolean) =>
-    `flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium transition ${
-      selected
-        ? "bg-accent text-accent-contrast shadow-[var(--shadow-sm)]"
-        : "text-ink/75 hover:bg-surface-2 hover:text-accent"
-    }`;
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_16rem]">
@@ -56,23 +50,16 @@ export default function GenreBrowser({
         <div className="lg:sticky lg:top-20">
           <SectionHeader accent="violet" size="lg" className="mb-4">Browse by genre</SectionHeader>
           <nav className="flex flex-col gap-1">
-            <button
-              type="button"
-              onClick={() => setActive("all")}
-              className={navItem(active === "all")}
-            >
-              <span>All genres</span>
-            </button>
+            <NavItem selected={active === "all"} onClick={() => setActive("all")} label="All genres" />
             {shelves.map((s) => (
-              <button
+              <NavItem
                 key={s.subject}
-                type="button"
+                selected={active === s.subject}
                 onClick={() => setActive(s.subject)}
-                className={navItem(active === s.subject)}
-              >
-                <span className="truncate">{s.label}</span>
-                <span className="text-xs opacity-70">{s.items.length}</span>
-              </button>
+                label={s.label}
+                count={s.items.length}
+                truncate
+              />
             ))}
           </nav>
         </div>
