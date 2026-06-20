@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Carousel from "@/components/Carousel";
+import Chip from "@/components/ui/Chip";
 import NavItem from "@/components/ui/NavItem";
 import SectionHeader from "@/components/ui/SectionHeader";
 import type { GenreShelf } from "@/lib/home";
@@ -38,7 +39,7 @@ export default function GenreBrowser({
           <div key={shelf.subject}>
             <div className="mb-3 flex items-baseline justify-between">
               <h3 className="text-lg font-semibold text-ink">{shelf.label}</h3>
-              <span className="chip">{shelf.items.length} books</span>
+              <Chip>{shelf.items.length} books</Chip>
             </div>
             <Carousel items={shelf.items} />
           </div>

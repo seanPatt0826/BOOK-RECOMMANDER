@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import HomeBackground from "@/components/HomeBackground";
 import GenreShelves from "@/components/GenreShelves";
 import Button from "@/components/ui/Button";
+import Chip from "@/components/ui/Chip";
 import SectionHeader from "@/components/ui/SectionHeader";
 
 export default async function HomePage() {
@@ -34,10 +35,10 @@ export default async function HomePage() {
 
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-2xl">
-            <span className="chip reveal reveal-1">
+            <Chip className="reveal reveal-1">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
               Books &amp; Movies, curated for you
-            </span>
+            </Chip>
             <h1 className="reveal reveal-2 mt-5 text-5xl font-semibold leading-[1.04] sm:text-7xl">
               Find your next
               <br />

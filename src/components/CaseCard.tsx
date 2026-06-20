@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Card from "@/components/ui/Card";
+import Chip from "@/components/ui/Chip";
 import type { UapCase } from "@/lib/uap/types";
 
 export default function CaseCard({ uapCase }: { uapCase: UapCase }) {
@@ -21,9 +22,7 @@ export default function CaseCard({ uapCase }: { uapCase: UapCase }) {
       <p className="text-sm leading-relaxed text-ink/80">{uapCase.summary}</p>
       <div className="mt-1 flex flex-wrap gap-1.5">
         {uapCase.tags.map((t) => (
-          <span key={t} className="chip">
-            {t}
-          </span>
+          <Chip key={t}>{t}</Chip>
         ))}
       </div>
     </Card>

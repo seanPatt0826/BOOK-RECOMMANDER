@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getCase } from "@/lib/uap/cases";
+import Chip from "@/components/ui/Chip";
 
 export default async function CasePage({
   params,
@@ -19,9 +20,7 @@ export default async function CasePage({
         </p>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {uapCase.tags.map((t) => (
-            <span key={t} className="chip">
-              {t}
-            </span>
+            <Chip key={t}>{t}</Chip>
           ))}
         </div>
       </header>
