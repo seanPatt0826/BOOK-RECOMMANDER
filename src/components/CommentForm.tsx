@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Button from "@/components/ui/Button";
+import Textarea from "@/components/ui/Textarea";
 
 export default function CommentForm({
   action,
@@ -27,14 +28,8 @@ export default function CommentForm({
 
   return (
     <form onSubmit={onSubmit} className="mt-3">
-      <textarea
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-        placeholder={placeholder}
-        rows={3}
-        maxLength={4000}
-        className="w-full rounded-lg border border-edge bg-paper px-3 py-2 text-sm text-ink placeholder:text-muted/70 focus:border-accent"
-      />
+      <Textarea value={body} onChange={(e) => setBody(e.target.value)}
+        placeholder={placeholder} rows={3} maxLength={4000} className="text-sm" />
       <Button type="submit" variant="primary" size="md" shape="rounded"
         disabled={pending || body.trim().length === 0} className="mt-2 py-1.5">
         {pending ? "Posting…" : submitLabel}

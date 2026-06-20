@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -65,22 +66,11 @@ export default function LoginPage() {
         </p>
 
         <form onSubmit={handleLogIn} className="space-y-3">
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full rounded-lg border border-edge bg-paper px-3 py-2 text-ink placeholder:text-muted/70 focus:border-accent"
-          />
-          <input
-            type="password"
-            required
-            value={password}
+          <Input type="email" required value={email}
+            onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+          <Input type="password" required value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password (at least 6 characters)"
-            className="w-full rounded-lg border border-edge bg-paper px-3 py-2 text-ink placeholder:text-muted/70 focus:border-accent"
-          />
+            placeholder="Password (at least 6 characters)" />
           <Button type="submit" variant="primary" className="w-full">Log in</Button>
           <Button type="button" onClick={handleSignUp} variant="secondary"
             className="w-full border-accent text-accent hover:bg-surface-2">
