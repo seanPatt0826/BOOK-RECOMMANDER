@@ -1,14 +1,11 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth";
 import SearchBar from "@/components/SearchBar";
 import ThemeToggle from "@/components/ThemeToggle";
 import Button from "@/components/ui/Button";
 
 export default async function NavBar() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
 
   return (
     <nav className="glass sticky top-0 z-40 border-b border-edge/80">
