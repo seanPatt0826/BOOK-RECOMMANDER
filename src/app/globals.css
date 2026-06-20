@@ -17,6 +17,11 @@
   --accent: #b65d1f;
   --accent-strong: #98480f;
   --accent-contrast: #fff8ef;
+  /* Semantic status colors (form errors / confirmations). */
+  --success: #2f7d32;
+  --success-contrast: #f3fbf3;
+  --danger: #c0392b;
+  --danger-contrast: #fff5f4;
   /* Secondary hues used only for the aurora glow + gradient text. */
   --rose: #d97757;
   --violet: #7c6cc4;
@@ -41,6 +46,10 @@
   --accent: #f0b364;
   --accent-strong: #ffc879;
   --accent-contrast: #1a150c;
+  --success: #7fd089;
+  --success-contrast: #0e1a0f;
+  --danger: #f08a7f;
+  --danger-contrast: #1a0f0e;
   --rose: #e8987a;
   --violet: #9b8ad8;
   --glow: rgba(240, 179, 100, 0.16);
@@ -62,6 +71,10 @@
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-accent-contrast: var(--accent-contrast);
+  --color-success: var(--success);
+  --color-success-contrast: var(--success-contrast);
+  --color-danger: var(--danger);
+  --color-danger-contrast: var(--danger-contrast);
   --color-rose: var(--rose);
   --color-violet: var(--violet);
   --font-display: var(--font-fraunces), ui-serif, Georgia, serif;

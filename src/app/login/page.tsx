@@ -98,9 +98,7 @@ export default function LoginPage() {
         {message && (
           <p
             className={`mt-4 text-sm ${
-              isError
-                ? "text-red-600 dark:text-red-400"
-                : "text-green-700 dark:text-green-400"
+              isError ? "text-danger" : "text-success"
             }`}
           >
             {message}
