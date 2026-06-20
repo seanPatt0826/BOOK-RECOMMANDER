@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import HomeBackground from "@/components/HomeBackground";
 import GenreShelves from "@/components/GenreShelves";
 import Button from "@/components/ui/Button";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 export default async function HomePage() {
   const [carousel, saved] = await Promise.all([
@@ -75,10 +76,7 @@ export default async function HomePage() {
 
       {/* Your shelf — saved titles, as their own scroll bar. */}
       <section className="mt-16">
-        <div className="mb-5 flex items-center gap-3">
-          <span className="h-5 w-1 rounded-full bg-rose" />
-          <h2 className="text-2xl font-semibold">Your shelf</h2>
-        </div>
+        <SectionHeader accent="rose" size="xl" className="mb-5">Your shelf</SectionHeader>
         {saved.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-edge bg-surface/50 p-5 text-sm text-muted">
             You haven&rsquo;t saved anything yet. Open a title and tap

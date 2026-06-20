@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Carousel from "@/components/Carousel";
+import SectionHeader from "@/components/ui/SectionHeader";
 import type { GenreShelf } from "@/lib/home";
 import type { SearchResult } from "@/lib/sources/types";
 
@@ -34,10 +35,7 @@ export default function GenreBrowser({
       <div className="min-w-0 space-y-10">
         {discover.length > 0 && (
           <div>
-            <div className="mb-3 flex items-center gap-3">
-              <span className="h-5 w-1 rounded-full bg-accent" />
-              <h2 className="text-2xl font-semibold">Discover</h2>
-            </div>
+            <SectionHeader accent="accent" size="xl" className="mb-3">Discover</SectionHeader>
             <Carousel items={discover} />
           </div>
         )}
@@ -56,10 +54,7 @@ export default function GenreBrowser({
       {/* Side nav: the genre list, sticky as you scroll the shelves. */}
       <aside>
         <div className="lg:sticky lg:top-20">
-          <div className="mb-4 flex items-center gap-3">
-            <span className="h-5 w-1 rounded-full bg-violet" />
-            <h2 className="text-lg font-semibold">Browse by genre</h2>
-          </div>
+          <SectionHeader accent="violet" size="lg" className="mb-4">Browse by genre</SectionHeader>
           <nav className="flex flex-col gap-1">
             <button
               type="button"

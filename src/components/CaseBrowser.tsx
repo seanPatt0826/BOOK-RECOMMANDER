@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import CaseCard from "@/components/CaseCard";
+import SectionHeader from "@/components/ui/SectionHeader";
 import type { UapCase } from "@/lib/uap/types";
 
 // Cases grid on the left; a sticky tag nav on the right filters it instantly,
@@ -41,10 +42,7 @@ export default function CaseBrowser({
 
       <aside>
         <div className="lg:sticky lg:top-20">
-          <div className="mb-4 flex items-center gap-3">
-            <span className="h-5 w-1 rounded-full bg-violet" />
-            <h2 className="text-lg font-semibold">Filter by tag</h2>
-          </div>
+          <SectionHeader accent="violet" size="lg" className="mb-4">Filter by tag</SectionHeader>
           <nav className="flex flex-col gap-1">
             <button
               type="button"
