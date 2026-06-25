@@ -1,6 +1,7 @@
 import { memo } from "react";
 import Link from "next/link";
 import Card from "@/components/ui/Card";
+import StarRating from "@/components/ui/StarRating";
 import type { SearchResult } from "@/lib/sources/types";
 
 function ResultCardImpl({ item }: { item: SearchResult }) {
@@ -43,12 +44,11 @@ function ResultCardImpl({ item }: { item: SearchResult }) {
         >
           {item.title}
         </p>
-        <p className="mt-0.5 text-xs text-muted">
-          {item.year ? item.year : ""}
-          {item.rating !== null
-            ? `${item.year ? " · " : ""}★ ${item.rating}`
-            : ""}
-        </p>
+        <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted">
+          {item.year && <span>{item.year}</span>}
+          {item.year && item.rating !== null && <span aria-hidden="true">·</span>}
+          {item.rating !== null && <StarRating rating={item.rating} size="sm" />}
+        </div>
       </div>
     </Card>
   );
