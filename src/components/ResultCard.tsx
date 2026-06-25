@@ -1,8 +1,9 @@
+import { memo } from "react";
 import Link from "next/link";
 import Card from "@/components/ui/Card";
 import type { SearchResult } from "@/lib/sources/types";
 
-export default function ResultCard({ item }: { item: SearchResult }) {
+function ResultCardImpl({ item }: { item: SearchResult }) {
   return (
     <Card
       as={Link}
@@ -52,3 +53,4 @@ export default function ResultCard({ item }: { item: SearchResult }) {
     </Card>
   );
 }
+export default memo(ResultCardImpl);

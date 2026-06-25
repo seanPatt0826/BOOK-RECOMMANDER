@@ -1,9 +1,10 @@
+import { memo } from "react";
 import Link from "next/link";
 import Card from "@/components/ui/Card";
 import Chip from "@/components/ui/Chip";
 import type { UapCase } from "@/lib/uap/types";
 
-export default function CaseCard({ uapCase }: { uapCase: UapCase }) {
+function CaseCardImpl({ uapCase }: { uapCase: UapCase }) {
   return (
     <Card
       as={Link}
@@ -28,3 +29,4 @@ export default function CaseCard({ uapCase }: { uapCase: UapCase }) {
     </Card>
   );
 }
+export default memo(CaseCardImpl);
