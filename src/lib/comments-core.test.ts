@@ -3,6 +3,7 @@ import {
   buildAuthorMap,
   toCommentViews,
   buildThread,
+  fetchAuthorMap,
   type CommentRow,
   type BoardRow,
   type ProfileRow,
@@ -54,5 +55,26 @@ describe("buildThread", () => {
     expect(thread[0].replies.map((r) => r.id)).toEqual(["r1", "r2"]);
     expect(thread[0].authorName).toBe("Ada");
     expect(thread[1].replies).toEqual([]);
+  });
+});
+
+describe("fetchAuthorMap", () => {
+  it("queries profiles for distinct user ids and maps id → name", async () => {
+    const calls: string[][] = [];
+    const supabase = {
+      from: () => ({
+        select: () => ({
+          in: async (_col: string, ids: string[]) => {
+            calls.push(ids);
+            return { data: [{ id: "a", display_name: "Ada" }, { id: "b", display_name: null }] };
+          },
+        }),
+      }),
+    };
+    const rows = [{ user_id: "a" }, { user_id: "a" }, { user_id: "b" }];
+    const map = await fetchAuthorMap(supabase as never, rows);
+    expect(calls).toEqual([["a", "b"]]);        // distinct ids
+    expect(map.get("a")).toBe("Ada");
+    expect(map.get("b")).toBe("Reader");         // null → fallback
   });
 });

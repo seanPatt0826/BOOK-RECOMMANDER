@@ -1,9 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import {
-  buildAuthorMap,
+  fetchAuthorMap,
   toCommentViews,
   type CommentRow,
-  type ProfileRow,
   type CommentView,
 } from "@/lib/comments-core";
 import type { MediaType } from "@/lib/sources/types";
@@ -22,10 +21,6 @@ export async function getTitleComments(
     .order("created_at", { ascending: true });
   const list = (rows ?? []) as CommentRow[];
   if (list.length === 0) return [];
-  const ids = [...new Set(list.map((r) => r.user_id))];
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("id, display_name")
-    .in("id", ids);
-  return toCommentViews(list, buildAuthorMap((profiles ?? []) as ProfileRow[]));
+  const authors = await fetchAuthorMap(supabase as never, list);
+  return toCommentViews(list, authors);
 }
