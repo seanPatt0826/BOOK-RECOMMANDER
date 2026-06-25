@@ -70,18 +70,43 @@ describe("searchBooks", () => {
     );
   }
 
-  it("prefers Open Library (which carries ratings) and returns its results", async () => {
+  it("queries both sources in parallel and prefers Open Library's rated results", async () => {
     const ol = {
       docs: [
         { key: "/works/OL1W", title: "Dune", ratings_average: 4.3, first_publish_year: 1965 },
       ],
     };
-    vi.stubGlobal("fetch", routedFetch({ "openlibrary.org/search": ol }));
+    vi.stubGlobal(
+      "fetch",
+      routedFetch({
+        "openlibrary.org/search": ol,
+        "googleapis.com/books": { items: [sampleVolume] },
+      }),
+    );
     const results = await searchBooks("dune");
     expect(results).toHaveLength(1);
     expect(results[0].title).toBe("Dune");
-    expect(results[0].rating).toBe(4.3); // ratings now flow through to search
-    expect(calledUrls()[0]).toContain("openlibrary.org/search"); // OL tried first
+    expect(results[0].rating).toBe(4.3); // Open Library's rating flows through
+    // Both sources are queried concurrently (Google fires even though OL wins).
+    const urls = calledUrls();
+    expect(urls.some((u) => u.includes("openlibrary.org/search"))).toBe(true);
+    expect(urls.some((u) => u.includes("googleapis.com/books"))).toBe(true);
+  });
+
+  it("returns Google Books results when Open Library fails — never an empty page", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        if (url.includes("openlibrary.org/search")) throw new Error("OL timeout");
+        if (url.includes("googleapis.com/books")) {
+          return { ok: true, json: async () => ({ items: [sampleVolume] }) };
+        }
+        return { ok: true, json: async () => ({}) };
+      }),
+    );
+    const results = await searchBooks("dune");
+    expect(results).toHaveLength(1);
+    expect(results[0].title).toBe("Dune");
   });
 
   it("falls back to Google Books when Open Library returns nothing", async () => {
@@ -95,9 +120,6 @@ describe("searchBooks", () => {
     const results = await searchBooks("dune");
     expect(results).toHaveLength(1);
     expect(results[0].title).toBe("Dune");
-    const urls = calledUrls();
-    expect(urls.some((u) => u.includes("openlibrary.org/search"))).toBe(true);
-    expect(urls.some((u) => u.includes("googleapis.com/books"))).toBe(true);
   });
 
   it("returns an empty array when neither source has results", async () => {
