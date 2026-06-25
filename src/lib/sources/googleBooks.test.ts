@@ -55,26 +55,75 @@ describe("normalizeBookDetail", () => {
 describe("searchBooks", () => {
   afterEach(() => vi.unstubAllGlobals());
 
-  it("calls the volumes endpoint and maps the items array", async () => {
-    const json = { items: [sampleVolume] };
+  // Route the mocked fetch by URL fragment so we can drive Open Library and
+  // Google Books independently; unmatched URLs return an empty payload.
+  function routedFetch(routes: Record<string, unknown>) {
+    return vi.fn(async (url: string) => {
+      const json =
+        Object.entries(routes).find(([frag]) => url.includes(frag))?.[1] ?? {};
+      return { ok: true, json: async () => json };
+    });
+  }
+  function calledUrls(): string[] {
+    return (fetch as unknown as { mock: { calls: string[][] } }).mock.calls.map(
+      (c) => c[0],
+    );
+  }
+
+  it("queries both sources in parallel and prefers Open Library's rated results", async () => {
+    const ol = {
+      docs: [
+        { key: "/works/OL1W", title: "Dune", ratings_average: 4.3, first_publish_year: 1965 },
+      ],
+    };
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue({ ok: true, json: async () => json }),
+      routedFetch({
+        "openlibrary.org/search": ol,
+        "googleapis.com/books": { items: [sampleVolume] },
+      }),
     );
     const results = await searchBooks("dune");
     expect(results).toHaveLength(1);
     expect(results[0].title).toBe("Dune");
-    const calledUrl = (fetch as unknown as { mock: { calls: string[][] } }).mock
-      .calls[0][0];
-    expect(calledUrl).toContain("googleapis.com/books/v1/volumes");
-    expect(calledUrl).toContain("q=dune");
+    expect(results[0].rating).toBe(4.3); // Open Library's rating flows through
+    // Both sources are queried concurrently (Google fires even though OL wins).
+    const urls = calledUrls();
+    expect(urls.some((u) => u.includes("openlibrary.org/search"))).toBe(true);
+    expect(urls.some((u) => u.includes("googleapis.com/books"))).toBe(true);
   });
 
-  it("returns an empty array when the API returns no items", async () => {
+  it("returns Google Books results when Open Library fails — never an empty page", async () => {
     vi.stubGlobal(
       "fetch",
-      vi.fn().mockResolvedValue({ ok: true, json: async () => ({}) }),
+      vi.fn(async (url: string) => {
+        if (url.includes("openlibrary.org/search")) throw new Error("OL timeout");
+        if (url.includes("googleapis.com/books")) {
+          return { ok: true, json: async () => ({ items: [sampleVolume] }) };
+        }
+        return { ok: true, json: async () => ({}) };
+      }),
     );
+    const results = await searchBooks("dune");
+    expect(results).toHaveLength(1);
+    expect(results[0].title).toBe("Dune");
+  });
+
+  it("falls back to Google Books when Open Library returns nothing", async () => {
+    vi.stubGlobal(
+      "fetch",
+      routedFetch({
+        "openlibrary.org/search": { docs: [] },
+        "googleapis.com/books": { items: [sampleVolume] },
+      }),
+    );
+    const results = await searchBooks("dune");
+    expect(results).toHaveLength(1);
+    expect(results[0].title).toBe("Dune");
+  });
+
+  it("returns an empty array when neither source has results", async () => {
+    vi.stubGlobal("fetch", routedFetch({}));
     expect(await searchBooks("zzz")).toEqual([]);
   });
 });

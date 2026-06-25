@@ -54,18 +54,26 @@ export function normalizeBookDetail(volume: GoogleVolume): MediaDetail {
   };
 }
 
+async function searchBooksGoogle(query: string): Promise<SearchResult[]> {
+  const url = `${BASE}?q=${encodeURIComponent(query)}&maxResults=10`;
+  const data = (await fetchJson(url)) as { items?: GoogleVolume[] };
+  return (data.items ?? []).map(normalizeBookItem);
+}
+
 export async function searchBooks(query: string): Promise<SearchResult[]> {
-  // Try Google Books first; fall back to Open Library when it fails (its
-  // keyless quota is often exhausted) or returns nothing.
-  try {
-    const url = `${BASE}?q=${encodeURIComponent(query)}&maxResults=10`;
-    const data = (await fetchJson(url)) as { items?: GoogleVolume[] };
-    const items = (data.items ?? []).map(normalizeBookItem);
-    if (items.length > 0) return items;
-  } catch {
-    // fall through
-  }
-  return searchBooksOpenLibrary(query);
+  // Query both sources in parallel and prefer Open Library — it carries star
+  // ratings, whereas Google Books' keyless search rarely includes averageRating
+  // (and its quota is often exhausted). Running them concurrently means a slow
+  // or flaky Open Library never makes the page wait out its full timeout before
+  // Google's results are available, and a failure in either source can't empty
+  // the page while the other has results.
+  const [ol, google] = await Promise.allSettled([
+    searchBooksOpenLibrary(query),
+    searchBooksGoogle(query),
+  ]);
+  const olItems = ol.status === "fulfilled" ? ol.value : [];
+  if (olItems.length > 0) return olItems;
+  return google.status === "fulfilled" ? google.value : [];
 }
 
 export async function getBook(id: string): Promise<MediaDetail | null> {
