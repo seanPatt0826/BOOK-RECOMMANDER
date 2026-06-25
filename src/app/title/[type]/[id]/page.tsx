@@ -5,6 +5,7 @@ import { getMovie } from "@/lib/sources/tmdb";
 import { createClient } from "@/lib/supabase/server";
 import { isSaved } from "@/lib/saved";
 import SaveButton from "@/components/SaveButton";
+import StarRating from "@/components/ui/StarRating";
 import type { MediaDetail, SearchResult } from "@/lib/sources/types";
 import CommentsSection from "@/components/CommentsSection";
 
@@ -73,11 +74,16 @@ export default async function TitlePage({
 
         <div className="flex-1">
           <h1 className="text-3xl font-semibold">{detail.title}</h1>
-          <p className="mt-1 text-sm text-accent">
+          <div className="mt-1 flex flex-wrap items-center gap-x-1.5 text-sm text-accent">
             <span className="capitalize">{detail.type}</span>
-            {detail.year ? ` · ${detail.year}` : ""}
-            {detail.rating !== null ? ` · ★ ${detail.rating}` : ""}
-          </p>
+            {detail.year && <span aria-hidden="true">· {detail.year}</span>}
+            {detail.rating !== null && (
+              <>
+                <span aria-hidden="true">·</span>
+                <StarRating rating={detail.rating} size="md" showValue />
+              </>
+            )}
+          </div>
 
           {detail.creators.length > 0 && (
             <p className="mt-2 text-sm text-muted">
