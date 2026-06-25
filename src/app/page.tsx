@@ -4,6 +4,9 @@ import Carousel from "@/components/Carousel";
 import { Suspense } from "react";
 import HomeBackground from "@/components/HomeBackground";
 import GenreShelves from "@/components/GenreShelves";
+import Button from "@/components/ui/Button";
+import Chip from "@/components/ui/Chip";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 export default async function HomePage() {
   const [carousel, saved] = await Promise.all([
@@ -32,10 +35,10 @@ export default async function HomePage() {
 
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-2xl">
-            <span className="chip reveal reveal-1">
+            <Chip className="reveal reveal-1">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
               Books &amp; Movies, curated for you
-            </span>
+            </Chip>
             <h1 className="reveal reveal-2 mt-5 text-5xl font-semibold leading-[1.04] sm:text-7xl">
               Find your next
               <br />
@@ -46,18 +49,14 @@ export default async function HomePage() {
               and let ShelfMate point you toward what to read or watch next.
             </p>
             <div className="reveal reveal-4 mt-7 flex flex-wrap items-center gap-3">
-              <a
-                href="/search"
-                className="rounded-full bg-accent px-6 py-3 text-sm font-semibold text-accent-contrast shadow-[var(--shadow-md)] transition hover:-translate-y-0.5 hover:bg-accent-strong"
-              >
+              <Button href="/search" variant="primary" size="lg" shape="pill"
+                className="shadow-[var(--shadow-md)] hover:-translate-y-0.5">
                 Start exploring
-              </a>
-              <a
-                href="/community"
-                className="rounded-full border border-edge bg-surface/60 px-6 py-3 text-sm font-semibold text-ink transition hover:border-accent hover:text-accent"
-              >
+              </Button>
+              <Button href="/community" variant="secondary" size="lg" shape="pill"
+                className="bg-surface/60">
                 Visit the community
-              </a>
+              </Button>
             </div>
           </div>
           <div className="reveal reveal-4">
@@ -78,10 +77,7 @@ export default async function HomePage() {
 
       {/* Your shelf — saved titles, as their own scroll bar. */}
       <section className="mt-16">
-        <div className="mb-5 flex items-center gap-3">
-          <span className="h-5 w-1 rounded-full bg-rose" />
-          <h2 className="text-2xl font-semibold">Your shelf</h2>
-        </div>
+        <SectionHeader accent="rose" size="xl" className="mb-5">Your shelf</SectionHeader>
         {saved.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-edge bg-surface/50 p-5 text-sm text-muted">
             You haven&rsquo;t saved anything yet. Open a title and tap

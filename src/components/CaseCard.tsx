@@ -1,11 +1,15 @@
+import { memo } from "react";
 import Link from "next/link";
+import Card from "@/components/ui/Card";
+import Chip from "@/components/ui/Chip";
 import type { UapCase } from "@/lib/uap/types";
 
-export default function CaseCard({ uapCase }: { uapCase: UapCase }) {
+function CaseCardImpl({ uapCase }: { uapCase: UapCase }) {
   return (
-    <Link
+    <Card
+      as={Link}
       href={`/uap/${encodeURIComponent(uapCase.slug)}`}
-      className="card group flex flex-col gap-2 p-4"
+      className="group flex flex-col gap-2 p-4"
     >
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="font-medium text-ink transition group-hover:text-accent">
@@ -19,11 +23,10 @@ export default function CaseCard({ uapCase }: { uapCase: UapCase }) {
       <p className="text-sm leading-relaxed text-ink/80">{uapCase.summary}</p>
       <div className="mt-1 flex flex-wrap gap-1.5">
         {uapCase.tags.map((t) => (
-          <span key={t} className="chip">
-            {t}
-          </span>
+          <Chip key={t}>{t}</Chip>
         ))}
       </div>
-    </Link>
+    </Card>
   );
 }
+export default memo(CaseCardImpl);

@@ -1,14 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentUser } from "@/lib/auth";
 import { itemRowToResult, type ItemRow } from "@/lib/itemRow";
 import type { SearchResult, MediaType } from "@/lib/sources/types";
 
 /** The signed-in user's saved list, newest first. [] when logged out. */
 export async function getSavedItems(): Promise<SearchResult[]> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return [];
+  const supabase = await createClient();
   const { data } = await supabase
     .from("saved_items")
     .select("item_id, item_type, title, cover_url")
@@ -22,11 +21,9 @@ export async function isSaved(
   itemId: string,
   itemType: MediaType,
 ): Promise<boolean> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   if (!user) return false;
+  const supabase = await createClient();
   const { data } = await supabase
     .from("saved_items")
     .select("id")

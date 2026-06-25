@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
 type Mode = "calm" | "nature" | "gradient";
+
+const STORAGE_KEY = "shelf-bg";
+const MODE_CHANGE_EVENT = "shelf-bg-change";
 
 // Drifting leaves: scattered columns, sizes, speeds and green tints.
 const LEAVES = [
@@ -68,29 +71,58 @@ function Grass() {
   );
 }
 
-export default function HomeBackground() {
-  const [mode, setMode] = useState<Mode>("calm");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    try {
-      const saved = localStorage.getItem("shelf-bg") as Mode | null;
-      if (saved === "calm" || saved === "nature" || saved === "gradient") {
-        setMode(saved);
-      }
-    } catch {
-      // Storage blocked — just use the calm default.
+// Read the saved scene from storage (blocked storage → "calm"). Client-only:
+// useSyncExternalStore calls this for the client snapshot, never on the server.
+function readSavedMode(): Mode {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === "calm" || saved === "nature" || saved === "gradient") {
+      return saved;
     }
-  }, []);
+  } catch {
+    // Storage blocked — fall through to the calm default.
+  }
+  return "calm";
+}
+
+function subscribeMode(onChange: () => void): () => void {
+  window.addEventListener(MODE_CHANGE_EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(MODE_CHANGE_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
+// localStorage is the source of truth for the scene. The server snapshot is
+// always "calm", so the server render and the client's first (hydration) render
+// agree; the saved value is read only on the client, after hydration.
+function useBackgroundMode(): Mode {
+  return useSyncExternalStore(subscribeMode, readSavedMode, () => "calm");
+}
+
+// false on the server and the first client render, true after — so the portal
+// is client-only and does not run during SSR (renderToString can't do portals).
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+}
+
+export default function HomeBackground() {
+  const mode = useBackgroundMode();
+  const mounted = useHydrated();
 
   function choose(next: Mode) {
-    setMode(next);
     try {
-      localStorage.setItem("shelf-bg", next);
+      localStorage.setItem(STORAGE_KEY, next);
     } catch {
       // Non-fatal.
     }
+    // Notify useSyncExternalStore subscribers so the scene re-reads immediately.
+    window.dispatchEvent(new Event(MODE_CHANGE_EVENT));
   }
 
   {/* Full-screen scene behind the page. All three are mounted and cross-fade

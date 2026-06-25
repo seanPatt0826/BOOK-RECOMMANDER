@@ -1,3 +1,5 @@
+import Button from "@/components/ui/Button";
+
 // A large, prominent search box for the search page. Plain GET form so it
 // works with or without JS — submitting navigates to /search?q=…
 export default function BigSearchBar({
@@ -32,12 +34,10 @@ export default function BigSearchBar({
         className="w-full rounded-2xl border-2 border-edge bg-surface py-5 pl-14 pr-32 text-xl text-ink shadow-[var(--shadow-md)] outline-none transition placeholder:text-muted/70 focus:border-accent focus:shadow-[var(--shadow-lg)]"
       />
 
-      <button
-        type="submit"
-        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-accent-contrast transition hover:bg-accent-strong"
-      >
+      <Button type="submit" variant="primary" shape="xl"
+        className="absolute right-3 top-1/2 -translate-y-1/2 px-6 py-3">
         Search
-      </button>
+      </Button>
     </form>
   );
 }

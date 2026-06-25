@@ -1,20 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
+
+// Subscribe to changes of the <html> class so the toggle reflects the live theme.
+function subscribeToHtmlClass(onChange: () => void): () => void {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+  return () => observer.disconnect();
+}
+
+// The DOM's `.dark` class is the source of truth. useSyncExternalStore renders
+// the server snapshot (light) during SSR *and* the first hydration render, then
+// switches to the live DOM value — so the server and client agree and there is
+// no hydration mismatch. The no-flash script in layout.tsx sets the real class.
+function useIsDark(): boolean {
+  return useSyncExternalStore(
+    subscribeToHtmlClass,
+    () => document.documentElement.classList.contains("dark"),
+    () => false,
+  );
+}
+
+// Hydration flag: false on the server and the first client render, true after.
+// Same server-snapshot trick keeps the icon's fade-in from causing a mismatch.
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+}
 
 export default function ThemeToggle() {
-  // Start matching what the no-flash script already decided, then sync on mount.
-  const [dark, setDark] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setDark(document.documentElement.classList.contains("dark"));
-    setMounted(true);
-  }, []);
+  const dark = useIsDark();
+  const mounted = useHydrated();
 
   function toggle() {
     const next = !dark;
-    setDark(next);
     document.documentElement.classList.toggle("dark", next);
     try {
       localStorage.setItem("theme", next ? "dark" : "light");

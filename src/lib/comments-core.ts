@@ -52,6 +52,27 @@ export function toCommentViews(
   return rows.map((row) => viewOf(row, authors));
 }
 
+type SupabaseLike = {
+  from(table: string): {
+    select(cols: string): {
+      in(col: string, vals: string[]): PromiseLike<{ data: unknown }>;
+    };
+  };
+};
+
+/** Fetch display names for the distinct user_ids in `rows`, as an author map. */
+export async function fetchAuthorMap(
+  supabase: SupabaseLike,
+  rows: { user_id: string }[],
+): Promise<Map<string, string>> {
+  const ids = [...new Set(rows.map((r) => r.user_id))];
+  const { data } = await supabase
+    .from("profiles")
+    .select("id, display_name")
+    .in("id", ids);
+  return buildAuthorMap((data ?? []) as ProfileRow[]);
+}
+
 /** Group board rows into top-level posts each with their replies (one level). */
 export function buildThread(
   rows: BoardRow[],

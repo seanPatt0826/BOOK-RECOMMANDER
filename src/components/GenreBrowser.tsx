@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import Carousel from "@/components/Carousel";
+import Chip from "@/components/ui/Chip";
+import NavItem from "@/components/ui/NavItem";
+import SectionHeader from "@/components/ui/SectionHeader";
 import type { GenreShelf } from "@/lib/home";
 import type { SearchResult } from "@/lib/sources/types";
 
@@ -21,23 +24,13 @@ export default function GenreBrowser({
   const visible =
     active === "all" ? shelves : shelves.filter((s) => s.subject === active);
 
-  const navItem = (selected: boolean) =>
-    `flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium transition ${
-      selected
-        ? "bg-accent text-accent-contrast shadow-[var(--shadow-sm)]"
-        : "text-ink/75 hover:bg-surface-2 hover:text-accent"
-    }`;
-
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_16rem]">
       {/* Main column: Discover + the selected genre's shelves. */}
       <div className="min-w-0 space-y-10">
         {discover.length > 0 && (
           <div>
-            <div className="mb-3 flex items-center gap-3">
-              <span className="h-5 w-1 rounded-full bg-accent" />
-              <h2 className="text-2xl font-semibold">Discover</h2>
-            </div>
+            <SectionHeader accent="accent" size="xl" className="mb-3">Discover</SectionHeader>
             <Carousel items={discover} />
           </div>
         )}
@@ -46,7 +39,7 @@ export default function GenreBrowser({
           <div key={shelf.subject}>
             <div className="mb-3 flex items-baseline justify-between">
               <h3 className="text-lg font-semibold text-ink">{shelf.label}</h3>
-              <span className="chip">{shelf.items.length} books</span>
+              <Chip>{shelf.items.length} books</Chip>
             </div>
             <Carousel items={shelf.items} />
           </div>
@@ -56,28 +49,18 @@ export default function GenreBrowser({
       {/* Side nav: the genre list, sticky as you scroll the shelves. */}
       <aside>
         <div className="lg:sticky lg:top-20">
-          <div className="mb-4 flex items-center gap-3">
-            <span className="h-5 w-1 rounded-full bg-violet" />
-            <h2 className="text-lg font-semibold">Browse by genre</h2>
-          </div>
+          <SectionHeader accent="violet" size="lg" className="mb-4">Browse by genre</SectionHeader>
           <nav className="flex flex-col gap-1">
-            <button
-              type="button"
-              onClick={() => setActive("all")}
-              className={navItem(active === "all")}
-            >
-              <span>All genres</span>
-            </button>
+            <NavItem selected={active === "all"} onClick={() => setActive("all")} label="All genres" />
             {shelves.map((s) => (
-              <button
+              <NavItem
                 key={s.subject}
-                type="button"
+                selected={active === s.subject}
                 onClick={() => setActive(s.subject)}
-                className={navItem(active === s.subject)}
-              >
-                <span className="truncate">{s.label}</span>
-                <span className="text-xs opacity-70">{s.items.length}</span>
-              </button>
+                label={s.label}
+                count={s.items.length}
+                truncate
+              />
             ))}
           </nav>
         </div>

@@ -1,9 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import {
-  buildAuthorMap,
+  fetchAuthorMap,
   buildThread,
   type BoardRow,
-  type ProfileRow,
   type BoardThreadItem,
 } from "@/lib/comments-core";
 
@@ -16,10 +15,6 @@ export async function getBoardThread(): Promise<BoardThreadItem[]> {
     .order("created_at", { ascending: true });
   const list = (rows ?? []) as BoardRow[];
   if (list.length === 0) return [];
-  const ids = [...new Set(list.map((r) => r.user_id))];
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("id, display_name")
-    .in("id", ids);
-  return buildThread(list, buildAuthorMap((profiles ?? []) as ProfileRow[]));
+  const authors = await fetchAuthorMap(supabase as never, list);
+  return buildThread(list, authors);
 }
