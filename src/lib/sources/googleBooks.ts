@@ -55,8 +55,15 @@ export function normalizeBookDetail(volume: GoogleVolume): MediaDetail {
 }
 
 export async function searchBooks(query: string): Promise<SearchResult[]> {
-  // Try Google Books first; fall back to Open Library when it fails (its
-  // keyless quota is often exhausted) or returns nothing.
+  // Prefer Open Library: it carries star ratings, whereas Google Books' keyless
+  // search rarely includes averageRating (and its quota is often exhausted).
+  // Fall back to Google Books only when Open Library fails or returns nothing.
+  try {
+    const items = await searchBooksOpenLibrary(query);
+    if (items.length > 0) return items;
+  } catch {
+    // fall through to Google Books
+  }
   try {
     const url = `${BASE}?q=${encodeURIComponent(query)}&maxResults=10`;
     const data = (await fetchJson(url)) as { items?: GoogleVolume[] };
@@ -65,7 +72,7 @@ export async function searchBooks(query: string): Promise<SearchResult[]> {
   } catch {
     // fall through
   }
-  return searchBooksOpenLibrary(query);
+  return [];
 }
 
 export async function getBook(id: string): Promise<MediaDetail | null> {
