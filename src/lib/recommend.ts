@@ -156,19 +156,19 @@ export interface RecommendedRow {
 }
 
 /** Pull a saved book's Open Library subjects; [] for non-OL ids or on error. */
-async function fetchBookSubjects(
+export async function fetchBookSubjects(
   id: string,
   title: string,
 ): Promise<SavedSubjects> {
-  // Only Open Library work ids (OL…W) carry subjects via the search index.
+  // Only Open Library work ids (OL…W) carry subjects. Read them from the work
+  // endpoint (the same one getBook uses, so it's reliably reachable) — its
+  // `subjects` array is richer and steadier than the search index's.
   if (!OPEN_LIBRARY_ID.test(id)) return { title, subjects: [] };
   try {
     const data = (await fetchJson(
-      `https://openlibrary.org/search.json?q=key:/works/${encodeURIComponent(
-        id,
-      )}&fields=subject&limit=1`,
-    )) as { docs?: { subject?: string[] }[] };
-    return { title, subjects: data.docs?.[0]?.subject ?? [] };
+      `https://openlibrary.org/works/${encodeURIComponent(id)}.json`,
+    )) as { subjects?: string[] };
+    return { title, subjects: data.subjects ?? [] };
   } catch {
     return { title, subjects: [] };
   }

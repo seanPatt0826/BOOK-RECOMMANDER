@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getBook } from "@/lib/sources/googleBooks";
 import { getMovie } from "@/lib/sources/tmdb";
@@ -8,6 +9,7 @@ import SaveButton from "@/components/SaveButton";
 import StarRating from "@/components/ui/StarRating";
 import type { MediaDetail, SearchResult } from "@/lib/sources/types";
 import CommentsSection from "@/components/CommentsSection";
+import SimilarSection from "@/components/SimilarSection";
 
 export default async function TitlePage({
   params,
@@ -109,6 +111,12 @@ export default async function TitlePage({
           )}
         </div>
       </div>
+
+      {/* More like this — related titles by genre. Streams in its own boundary
+          and renders nothing when there's no signal (non-OL book, no genre). */}
+      <Suspense fallback={null}>
+        <SimilarSection detail={detail} />
+      </Suspense>
 
       <CommentsSection itemId={detail.id} itemType={detail.type} />
     </main>

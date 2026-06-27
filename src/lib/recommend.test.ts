@@ -65,9 +65,9 @@ describe("getRecommendations", () => {
     rating: null,
   });
 
-  // Route the mocked fetch: the subjects-index lookup (q=key:…) returns a
-  // saved book's subjects; the genre-shelf lookup (q=subject:…) returns books;
-  // Google Books is routed empty so the shelf falls through to Open Library.
+  // Route the mocked fetch: the work lookup (/works/<id>.json) returns a saved
+  // book's subjects; the genre-shelf lookup (q=subject:…) returns books; Google
+  // Books is routed empty so the shelf falls through to Open Library.
   function routedFetch(opts: {
     subjects: string[];
     shelf: { key: string; title: string }[];
@@ -76,11 +76,8 @@ describe("getRecommendations", () => {
       if (url.includes("googleapis.com")) {
         return { ok: true, json: async () => ({ items: [] }) };
       }
-      if (url.includes("key:/works")) {
-        return {
-          ok: true,
-          json: async () => ({ docs: [{ subject: opts.subjects }] }),
-        };
+      if (url.includes("/works/")) {
+        return { ok: true, json: async () => ({ subjects: opts.subjects }) };
       }
       if (url.includes("subject:")) {
         return { ok: true, json: async () => ({ docs: opts.shelf }) };
