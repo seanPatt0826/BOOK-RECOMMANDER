@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import HomeBackground from "@/components/HomeBackground";
 import GenreShelves from "@/components/GenreShelves";
 import RecommendedSection from "@/components/RecommendedSection";
+import { groupByStatus } from "@/lib/readingStatus";
 import Button from "@/components/ui/Button";
 import Chip from "@/components/ui/Chip";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -83,7 +84,7 @@ export default async function HomePage() {
         <RecommendedSection saved={saved} />
       </Suspense>
 
-      {/* Your shelf — saved titles, as their own scroll bar. */}
+      {/* Your shelf — saved titles split across reading-status shelves. */}
       <section className="mt-16">
         <SectionHeader accent="rose" size="xl" className="mb-5">Your shelf</SectionHeader>
         {saved.length === 0 ? (
@@ -92,7 +93,21 @@ export default async function HomePage() {
             &ldquo;Save to my list&rdquo;.
           </p>
         ) : (
-          <Carousel items={saved} />
+          <div className="flex flex-col gap-9">
+            {groupByStatus(saved)
+              .filter((shelf) => shelf.items.length > 0)
+              .map((shelf) => (
+                <div key={shelf.status}>
+                  <h3 className="mb-3 text-sm font-semibold text-muted">
+                    {shelf.label}
+                    <span className="ml-1.5 text-xs font-normal text-muted/70">
+                      {shelf.items.length}
+                    </span>
+                  </h3>
+                  <Carousel items={shelf.items} />
+                </div>
+              ))}
+          </div>
         )}
       </section>
     </main>
