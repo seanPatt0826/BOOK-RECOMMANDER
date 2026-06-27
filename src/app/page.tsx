@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import HomeBackground from "@/components/HomeBackground";
 import GenreShelves from "@/components/GenreShelves";
 import RecommendedSection from "@/components/RecommendedSection";
+import HeroCovers from "@/components/HeroCovers";
 import { groupByStatus } from "@/lib/readingStatus";
 import Button from "@/components/ui/Button";
 import Chip from "@/components/ui/Chip";
@@ -35,7 +36,7 @@ export default async function HomePage() {
           />
         </div>
 
-        <div className="flex flex-wrap items-end justify-between gap-6">
+        <div className="flex flex-col items-start gap-12 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl">
             <Chip className="reveal reveal-1">
               <span className="h-1.5 w-1.5 rounded-full bg-accent" />
@@ -61,9 +62,16 @@ export default async function HomePage() {
               </Button>
             </div>
           </div>
-          <div className="reveal reveal-4">
-            <HomeBackground />
+
+          {/* A fanned stack of real covers fills the right side on wide screens. */}
+          <div className="reveal reveal-4 hidden shrink-0 lg:block">
+            <HeroCovers items={carousel} />
           </div>
+        </div>
+
+        {/* Subtle background-scene control, tucked into the corner. */}
+        <div className="reveal reveal-4 absolute bottom-4 right-4 z-10">
+          <HomeBackground />
         </div>
       </header>
 
