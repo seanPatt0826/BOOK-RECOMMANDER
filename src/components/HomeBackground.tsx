@@ -177,13 +177,26 @@ export default function HomeBackground() {
     <>
       {mounted && createPortal(scene, document.body)}
 
-      {/* The picker. */}
-      <label className="flex items-center gap-2 rounded-full border border-edge bg-surface/70 px-3 py-1.5 text-sm backdrop-blur">
-        <span className="text-muted">Background</span>
+      {/* Subtle scene picker — low-emphasis until hovered. */}
+      <label className="flex items-center gap-1.5 rounded-full border border-edge/50 bg-surface/40 px-2.5 py-1 text-xs text-muted backdrop-blur transition hover:border-edge hover:bg-surface/70">
+        <svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M12 3l1.9 5.8H20l-4.9 3.6 1.9 5.8L12 14.6 6.1 18.2 8 12.4 3 8.8h6.1z" />
+        </svg>
+        <span className="sr-only">Background scene</span>
         <select
           value={mode}
           onChange={(e) => choose(e.target.value as Mode)}
-          className="cursor-pointer bg-transparent font-medium text-ink focus:outline-none"
+          className="cursor-pointer bg-transparent font-medium text-ink/80 focus:outline-none"
           aria-label="Choose background style"
         >
           <option value="calm">Calm</option>
