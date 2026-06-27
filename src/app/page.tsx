@@ -4,6 +4,7 @@ import Carousel from "@/components/Carousel";
 import { Suspense } from "react";
 import HomeBackground from "@/components/HomeBackground";
 import GenreShelves from "@/components/GenreShelves";
+import RecommendedSection from "@/components/RecommendedSection";
 import Button from "@/components/ui/Button";
 import Chip from "@/components/ui/Chip";
 import SectionHeader from "@/components/ui/SectionHeader";
@@ -73,6 +74,13 @@ export default async function HomePage() {
         }
       >
         <GenreShelves discover={carousel} />
+      </Suspense>
+
+      {/* Recommended for you — inferred from saved titles' genres. Streams in
+          its own boundary so its Open Library lookups don't block the page;
+          renders nothing when there's no signal (logged out / empty shelf). */}
+      <Suspense fallback={null}>
+        <RecommendedSection saved={saved} />
       </Suspense>
 
       {/* Your shelf — saved titles, as their own scroll bar. */}
