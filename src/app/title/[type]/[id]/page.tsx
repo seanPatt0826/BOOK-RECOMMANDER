@@ -4,8 +4,9 @@ import { notFound } from "next/navigation";
 import { getBook } from "@/lib/sources/googleBooks";
 import { getMovie } from "@/lib/sources/tmdb";
 import { createClient } from "@/lib/supabase/server";
-import { isSaved } from "@/lib/saved";
-import SaveButton from "@/components/SaveButton";
+import { isSaved, getSavedStatus } from "@/lib/saved";
+import { DEFAULT_READING_STATUS } from "@/lib/readingStatus";
+import ReadingShelfControl from "@/components/ReadingShelfControl";
 import StarRating from "@/components/ui/StarRating";
 import type { MediaDetail, SearchResult } from "@/lib/sources/types";
 import CommentsSection from "@/components/CommentsSection";
@@ -44,6 +45,11 @@ export default async function TitlePage({
     data: { user },
   } = await supabase.auth.getUser();
   const saved = user ? await isSaved(detail.id, detail.type) : false;
+  const status =
+    user && saved
+      ? ((await getSavedStatus(detail.id, detail.type)) ??
+        DEFAULT_READING_STATUS)
+      : DEFAULT_READING_STATUS;
 
   const item: SearchResult = {
     id: detail.id,
@@ -100,7 +106,11 @@ export default async function TitlePage({
           )}
 
           {user ? (
-            <SaveButton item={item} initialSaved={saved} />
+            <ReadingShelfControl
+              item={item}
+              initialSaved={saved}
+              initialStatus={status}
+            />
           ) : (
             <Link
               href="/login"
